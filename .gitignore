@@ -14,5 +14,16 @@
 .codegraph/
 .claude/
 
-pkg/
-src/
+# Next.js
+node_modules/
+.next/
+out/
+.env*.local
+.env.local
+next-env.d.ts
+.vercel
+*.tsbuildinfo
+
+# Yarn (node-modules linker)
+.yarn/install-state.gz
+.pnp.*
