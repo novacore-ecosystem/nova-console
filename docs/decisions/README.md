@@ -52,6 +52,23 @@ affect the ecosystem's architecture, not routine implementation choices.
   `shared/ui/` layer, if one emerges, should wrap `frontend-next-shadcn` exports rather
   than raw Radix primitives.
 
+### Tenant Management reads real data, mutates through a seeded in-memory adapter
+- **Context:** `GET /tenants` is real (Root-only summary list). Create/update/
+  activate/deactivate/get-by-id have no backend endpoint at all (see
+  docs/reference/domain-mapping.md). Showing real list data next to a *disconnected*
+  mock CRUD store would silently misrepresent state (create a tenant, it vanishes on
+  refresh; edit a real tenant, the edit applies to an unrelated mock copy).
+- **Decision:** `services/tenant/tenant.dev-adapter.ts` holds one in-memory store,
+  seeded once from the real `GET /tenants` response. All reads and writes after that
+  go through the adapter, so the UI is internally consistent (a created/edited tenant
+  behaves the same as a real one for the rest of the session) even though nothing
+  persists server-side yet.
+- **Why:** Matches the same isolation principle as the current-user adapter — one
+  clearly-labeled file, real data where it exists, no invented backend behavior implied.
+- **Divergence:** N/A, new pattern. Replace the adapter's write operations with real
+  HTTP calls once Tenant CRUD endpoints exist; `listTenants()` (the real call) doesn't
+  need to change.
+
 ### Session bootstrap probes `refresh-token`; identity/permissions are a stubbed, isolated adapter pending a `/me` endpoint
 - **Context:** No `GET /me`/session endpoint exists (see docs/reference/domain-mapping.md)
   — `POST /login` and `POST /refresh-token` both return empty bodies. The frontend

@@ -1,4 +1,5 @@
 import type { NavigationConfig } from "@novacore/frontend-next-shadcn";
+import { Permissions } from "@novacore/frontend-foundation";
 
 /**
  * Only routes that actually exist. Add a group's entries in the same commit that adds
@@ -16,6 +17,13 @@ export const navigationConfig: NavigationConfig = [
         label: "Overview",
         href: "/",
         match: "exact",
+      },
+      {
+        id: "tenants",
+        label: "Tenants",
+        href: "/tenants",
+        match: "prefix",
+        permission: Permissions.Root,
       },
     ],
   },
