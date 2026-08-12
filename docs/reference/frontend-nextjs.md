@@ -43,6 +43,53 @@ DatePicker/DateRangePicker/NumberInput/CurrencyInput/FileUpload/ImageUpload,
 EntitySelect/EntityCombobox, ActivityTimeline/MetadataPanel, schema-driven `AdminForm`.
 Check before assuming a component exists.
 
+### Shell wiring — use the config-driven path, not the manual one
+
+There are two ways to compose the admin shell. **Use the config-driven path** for
+nova-console:
+
+```tsx
+<AdminProvider theme={{ preset: "zinc-blue", mode: "system" }}>
+  <AdminShellProvider
+    navigation={navigationConfig}        // NavigationGroup[]
+    applications={applications}           // Application[] — app switcher entries
+    user={currentUser}                    // AdminUser | null
+    pathname={usePathname()}
+    linkComponent={Link}
+    onLogout={handleLogout}
+    hasPermission={checkPermission}       // PermissionChecker
+  >
+    <AdminLayout>{children}</AdminLayout>
+  </AdminShellProvider>
+</AdminProvider>
+```
+
+Leave `AdminLayout`'s `sidebar`/`header` props undefined — with a shell provider mounted,
+it renders the shell's own config-driven `Sidebar`/`Topbar`/`CommandPalette`
+automatically (active-state highlighting, permission filtering, breadcrumb, Cmd/Ctrl+K
+palette, all included). The **other** path — passing `AdminLayout` explicit `sidebar`/
+`header` JSX built from `AdminSidebar`/`AdminSidebarItem`/`AdminHeader` — is what
+`apps/playground` demonstrates, but it bypasses navigation/permission filtering, i18n,
+and the command palette entirely. Don't copy the playground's pattern for a real app.
+
+Key contracts (`NavigationItem`/`NavigationGroup`/`Application`/`AdminUser`/
+`PermissionChecker`) support `permission`/`requireAllPermissions` fields — the shell
+filters navigation and commands by these automatically, given `hasPermission`. See
+reference/authorization.md.
+
+`PermissionGate` (`./layout` export) does **not** read shell context automatically — pass
+`can` explicitly (e.g. `can={checkPermission}` from `useAdminShell()`, or
+`can={hasAnyPermission}` from `useCurrentUser()`).
+
+Use `ShellPageHeader` (from the `./shell` or root export) over the plain `PageHeader`
+(from `./layout`) for any page rendered inside a mounted shell — it resolves i18n
+`Label`s and can auto-derive breadcrumbs from the navigation config
+(`autoBreadcrumb`).
+
+The package implements **no authentication** — session resolution, login redirects, and
+protected routes are entirely the app's responsibility; the shell only renders whatever
+`AdminUser` you hand it. See reference/authentication.md.
+
 ## `packages/mui` → `@novacore/frontend-next-mui`
 
 Customer/storefront-facing (MUI + Emotion, fully hidden). Not used by nova-consoles (an

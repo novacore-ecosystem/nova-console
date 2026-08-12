@@ -52,6 +52,32 @@ affect the ecosystem's architecture, not routine implementation choices.
   `shared/ui/` layer, if one emerges, should wrap `frontend-next-shadcn` exports rather
   than raw Radix primitives.
 
+### nova-console gates entirely on `Permissions.Root`, not invented Tenant/Scope permissions
+- **Context:** The backend permission catalog has no `Tenant.*`/`Scope.*` keys yet — see
+  docs/reference/domain-mapping.md. The one real endpoint in this domain (`GET /tenants`)
+  is gated by `Permissions.Root` alone.
+- **Decision:** Every Tenant/Scope/Public-Key/Translation screen and action in
+  nova-console is gated by `Permissions.Root`, applied uniformly, rather than inventing
+  finer-grained permission strings that don't exist server-side.
+- **Why:** Client-side permission checks are a UI-only signal (see
+  reference/authorization.md) — inventing permission strings the server doesn't
+  recognize would be actively misleading, implying enforcement that doesn't exist.
+- **Divergence:** N/A — no prior app manages this domain. Revisit once the backend adds
+  granular Tenant/Scope permission keys.
+
+### Tenant/Scope/Public-Key features are built against a documented backend gap
+- **Context:** Tenant CRUD, Scope CRUD, and TenantClient (public key) management have no
+  backend API today — domain models exist, endpoints don't. See
+  docs/reference/domain-mapping.md.
+- **Decision:** `services/tenant/` and `services/scope/` are backed by an isolated
+  in-memory development adapter, typed against the real domain shapes, rather than
+  blocking frontend implementation until the backend catches up.
+- **Why:** Matches the documented ecosystem rule that UI must stay independent of
+  transport (see rules/state-and-data.md) — swapping the adapter for a real HTTP-backed
+  service later should require no changes above the `.service.ts` layer.
+- **Divergence:** N/A, new pattern. The adapter boundary itself is documented per-feature
+  as it's introduced (see each feature's own notes), not duplicated here.
+
 ### Component/hook pairing is a hard rule, not a convention
 - **Context:** AdminPortal only applies the `Component` + `useComponent` pairing
   consistently in one feature (`features/users`); other features mix hooks inline or into
