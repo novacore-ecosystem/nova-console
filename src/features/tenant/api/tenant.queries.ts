@@ -38,3 +38,14 @@ export function useUpdateTenantMutation(id: string) {
     },
   });
 }
+
+export function useSetTenantActiveMutation(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (isActive: boolean) => tenantService.setActive(id, isActive),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
+    },
+  });
+}
