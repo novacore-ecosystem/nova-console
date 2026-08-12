@@ -1,6 +1,7 @@
 import { DataTable, type DataTableColumn, StatusBadge } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
+import { TenantActions } from "@/features/tenant/components/TenantListPage/TenantActions";
 import type { TenantRecord } from "@/services/tenant";
 
 export interface TenantTableProps {
@@ -8,9 +9,10 @@ export interface TenantTableProps {
   loading: boolean;
   error: boolean;
   onRetry: () => void;
+  onEdit: (tenant: TenantRecord) => void;
 }
 
-export function TenantTable({ tenants, loading, error, onRetry }: TenantTableProps) {
+export function TenantTable({ tenants, loading, error, onRetry, onEdit }: TenantTableProps) {
   const { t } = useAppTranslation();
 
   const columns: DataTableColumn<TenantRecord>[] = [
@@ -25,6 +27,11 @@ export function TenantTable({ tenants, loading, error, onRetry }: TenantTablePro
         ) : (
           <StatusBadge label={t("tenant.status.inactive", "Inactive")} tone="neutral" />
         ),
+    },
+    {
+      id: "actions",
+      header: "",
+      cell: (tenant) => <TenantActions tenant={tenant} onEdit={onEdit} />,
     },
   ];
 

@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { tenantService } from "@/features/tenant/api/tenant.service";
-import type { CreateTenantInput } from "@/services/tenant";
+import type { CreateTenantInput, UpdateTenantInput } from "@/services/tenant";
 
 export const tenantKeys = {
   all: ["tenants"] as const,
@@ -22,6 +22,17 @@ export function useCreateTenantMutation() {
 
   return useMutation({
     mutationFn: (input: CreateTenantInput) => tenantService.create(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
+    },
+  });
+}
+
+export function useUpdateTenantMutation(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: UpdateTenantInput) => tenantService.update(id, input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
     },

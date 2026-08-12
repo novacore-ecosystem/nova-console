@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { useTenantsQuery } from "@/features/tenant/api/tenant.queries";
+import type { TenantRecord } from "@/services/tenant";
 
 export type TenantStatusFilter = "all" | "active" | "inactive";
 
@@ -10,6 +11,8 @@ export function useTenantListPage() {
   const tenantsQuery = useTenantsQuery();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<TenantStatusFilter>("all");
+  const [isCreateDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editingTenant, setEditingTenant] = useState<TenantRecord | null>(null);
 
   const tenantsData = tenantsQuery.data;
 
@@ -35,5 +38,11 @@ export function useTenantListPage() {
     setSearch,
     statusFilter,
     setStatusFilter,
+    isCreateDialogOpen,
+    openCreateDialog: () => setCreateDialogOpen(true),
+    setCreateDialogOpen,
+    editingTenant,
+    openEditDialog: setEditingTenant,
+    closeEditDialog: () => setEditingTenant(null),
   };
 }
