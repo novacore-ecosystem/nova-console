@@ -52,6 +52,27 @@ affect the ecosystem's architecture, not routine implementation choices.
   `shared/ui/` layer, if one emerges, should wrap `frontend-next-shadcn` exports rather
   than raw Radix primitives.
 
+### Session bootstrap probes `refresh-token`; identity/permissions are a stubbed, isolated adapter pending a `/me` endpoint
+- **Context:** No `GET /me`/session endpoint exists (see docs/reference/domain-mapping.md)
+  — `POST /login` and `POST /refresh-token` both return empty bodies. The frontend
+  cannot read the HTTP-only access-token cookie either.
+- **Decision:** On app load, nova-console silently calls `POST /refresh-token` to
+  determine *whether* a valid session exists (success = authenticated, 401 = not).
+  Actual identity and permissions come from an isolated dev adapter
+  (`services/auth/getCurrentUser.dev-adapter.ts`) that assumes an authenticated session
+  implies Root access — since nova-console's only real, callable endpoint in this domain
+  (`GET /tenants`) already requires Root, and every screen in this app gates on Root too.
+- **Why:** Refusing to render anything until a `/me` endpoint exists would make the
+  console unusable even for legitimate Root operators; inventing a fake `/me` response
+  shape and pretending it's real would violate "never pretend development
+  authentication is production." This is the narrowest possible assumption: it doesn't
+  invent permissions, doesn't fabricate roles, and is isolated to one clearly-labeled
+  file. Client-side permission checks are a UI-only signal regardless (see
+  reference/authorization.md) — the backend enforces the real boundary either way.
+- **Divergence:** N/A, new pattern. **Must be replaced** once a real session/`/me`
+  endpoint exists — that's a prerequisite for this assumption to go away, not just a
+  nice-to-have.
+
 ### nova-console gates entirely on `Permissions.Root`, not invented Tenant/Scope permissions
 - **Context:** The backend permission catalog has no `Tenant.*`/`Scope.*` keys yet — see
   docs/reference/domain-mapping.md. The one real endpoint in this domain (`GET /tenants`)

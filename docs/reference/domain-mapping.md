@@ -78,6 +78,20 @@ Cookie-based JWT, not bearer tokens in the response body:
 | GET/POST/PUT/DELETE | `/roles`, `/roles/{id}` | full CRUD, `PUT /roles/{id}/permissions` wholesale-replaces permission keys |
 | GET/PUT/DELETE | `/permissions`, `/permissions/{id}` | regroup/delete only, no create (permissions are seeded) |
 
+## Backend gap — no current-user/session endpoint
+
+There is no `GET /me`, `GET /session`, or equivalent. `BuildingBlock.Web/CurrentUser/
+CurrentUserService.cs` reads JWT claims **server-side, inside each backend service** —
+it is not an HTTP endpoint exposed to the frontend. `POST /login` sets HTTP-only cookies
+and returns an empty body; `POST /refresh-token` reissues cookies but also returns no
+user data. Since the access token cookie is HTTP-only, client-side JS cannot read or
+decode it either.
+
+**Practical effect:** nova-console has no way to learn who is logged in or what
+permissions they hold, beyond knowing a session cookie exists and is valid (confirmed by
+probing `POST /refresh-token`). See decisions/README.md for how the frontend handles
+this without inventing fake identity/permission data.
+
 ## Backend gaps (build against these, don't invent replacements)
 
 | Gap | Domain model exists? | API exists? |
