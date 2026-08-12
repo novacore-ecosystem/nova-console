@@ -10,5 +10,9 @@
 *.log.*
 *.sig
 
+.wolf/
+.codegraph/
+.claude/
+
 pkg/
 src/
