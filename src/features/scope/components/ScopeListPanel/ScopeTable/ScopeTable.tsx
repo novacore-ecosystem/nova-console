@@ -1,6 +1,7 @@
 import { DataTable, type DataTableColumn, StatusBadge } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
+import { ScopeActions } from "@/features/scope/components/ScopeListPanel/ScopeActions";
 import type { ScopeRecord } from "@/services/scope";
 
 export interface ScopeTableProps {
@@ -8,9 +9,10 @@ export interface ScopeTableProps {
   loading: boolean;
   error: boolean;
   onRetry: () => void;
+  onEdit: (scope: ScopeRecord) => void;
 }
 
-export function ScopeTable({ scopes, loading, error, onRetry }: ScopeTableProps) {
+export function ScopeTable({ scopes, loading, error, onRetry, onEdit }: ScopeTableProps) {
   const { t } = useAppTranslation();
 
   const columns: DataTableColumn<ScopeRecord>[] = [
@@ -26,6 +28,11 @@ export function ScopeTable({ scopes, loading, error, onRetry }: ScopeTableProps)
         ) : (
           <StatusBadge label={t("scope.status.inactive", "Inactive")} tone="neutral" />
         ),
+    },
+    {
+      id: "actions",
+      header: "",
+      cell: (scope) => <ScopeActions scope={scope} onEdit={onEdit} />,
     },
   ];
 

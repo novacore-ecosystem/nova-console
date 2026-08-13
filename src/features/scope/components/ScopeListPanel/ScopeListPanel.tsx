@@ -5,6 +5,7 @@ import { Button, PageSection } from "@novacore/frontend-next-shadcn";
 import { useAppTranslation } from "@/shared/i18n";
 import { ScopeTable } from "@/features/scope/components/ScopeListPanel/ScopeTable";
 import { ScopeFormDialog } from "@/features/scope/components/ScopeListPanel/ScopeFormDialog";
+import { ScopeEditDialog } from "@/features/scope/components/ScopeListPanel/ScopeEditDialog";
 import { useScopeListPanel } from "@/features/scope/components/ScopeListPanel/useScopeListPanel";
 
 export interface ScopeListPanelProps {
@@ -21,6 +22,9 @@ export function ScopeListPanel({ tenantId }: ScopeListPanelProps) {
     isCreateDialogOpen,
     openCreateDialog,
     setCreateDialogOpen,
+    editingScope,
+    openEditDialog,
+    closeEditDialog,
   } = useScopeListPanel(tenantId);
 
   return (
@@ -32,13 +36,22 @@ export function ScopeListPanel({ tenantId }: ScopeListPanelProps) {
       )}
       actions={<Button onClick={openCreateDialog}>{t("scope.list.newScope", "New scope")}</Button>}
     >
-      <ScopeTable scopes={scopes} loading={isLoading} error={isError} onRetry={() => refetch()} />
+      <ScopeTable
+        scopes={scopes}
+        loading={isLoading}
+        error={isError}
+        onRetry={() => refetch()}
+        onEdit={openEditDialog}
+      />
       <ScopeFormDialog
         tenantId={tenantId}
         scopes={scopes}
         open={isCreateDialogOpen}
         onOpenChange={setCreateDialogOpen}
       />
+      {editingScope ? (
+        <ScopeEditDialog key={editingScope.id} scope={editingScope} onClose={closeEditDialog} />
+      ) : null}
     </PageSection>
   );
 }

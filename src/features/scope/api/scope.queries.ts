@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { scopeService } from "@/features/scope/api/scope.service";
-import type { CreateScopeInput } from "@/services/scope";
+import type { CreateScopeInput, UpdateScopeInput } from "@/services/scope";
 
 export const scopeKeys = {
   all: ["scopes"] as const,
@@ -23,6 +23,17 @@ export function useCreateScopeMutation(tenantId: string) {
   return useMutation({
     mutationFn: (input: Omit<CreateScopeInput, "tenantId">) =>
       scopeService.create({ ...input, tenantId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: scopeKeys.lists(tenantId) });
+    },
+  });
+}
+
+export function useUpdateScopeMutation(tenantId: string, id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: UpdateScopeInput) => scopeService.update(tenantId, id, input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: scopeKeys.lists(tenantId) });
     },
