@@ -32,6 +32,13 @@ export const navigationConfig: NavigationConfig = [
         match: "prefix",
         permission: Permissions.Root,
       },
+      {
+        id: "localization",
+        label: "Localization",
+        href: "/localization",
+        match: "prefix",
+        permission: Permissions.Root,
+      },
     ],
   },
 ];

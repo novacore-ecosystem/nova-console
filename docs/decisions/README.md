@@ -52,6 +52,34 @@ affect the ecosystem's architecture, not routine implementation choices.
   `shared/ui/` layer, if one emerges, should wrap `frontend-next-shadcn` exports rather
   than raw Radix primitives.
 
+### Translation Management edits the live `tenant` override layer directly, no service/adapter split
+- **Context:** No structured translation-key backend exists at all — only opaque
+  per-tenant `TenantLocale.DictionaryJson` blobs and scattered per-aggregate translation
+  tables (see docs/reference/domain-mapping.md). There's nothing shaped like a
+  key/value store to call, real or mocked.
+- **Decision:** Translation Management edits `shared/stores/translationOverrides.store.ts`
+  directly — a Zustand store holding flat dotted-key overrides per locale
+  (`Record<Locale, Record<string, string>>`). `AppTranslationProvider` (from Phase 1)
+  now reads this store as the `tenant` layer of `createTranslator`'s resolution chain —
+  the highest-priority layer, exactly as documented in rules/localization.md. Editing a
+  translation in this UI changes what `t()` actually resolves to, live, app-wide.
+  The **browsable catalog** (the list of known keys and their base/fallback values) is
+  built by flattening `frontend-foundation`'s `TRANSLATION_RESOURCES` and this app's own
+  `APP_DICTIONARY` — both real, already-shipped dictionaries, not synthetic sample data.
+- **Why:** This is the one feature in nova-console where the "dev adapter standing in
+  for a missing backend" pattern doesn't fit — there's no entity shape to mimic. The
+  actual, real thing to manage is the resolution chain already built in Phase 1. Wiring
+  overrides into it directly makes the feature real (not a disconnected form that writes
+  to nowhere) without inventing a fake backend contract.
+- **Divergence:** No TanStack Query layer for this feature (see rules/state-and-data.md
+  — Query owns *fetched* data; there's nothing fetched here, it's synchronous in-memory
+  state, which is exactly what Zustand is for). Every other feature in this app uses
+  Query; this is a deliberate, narrow exception.
+- **Persistence:** in-memory only (a `TenantBootstrap`-sourced `tenant` dictionary is
+  the eventual real mechanism, per docs/reference/frontend-foundation.md — still no
+  confirmed backend endpoint for that). Overrides don't survive a page reload; this is
+  a known, documented limitation, not a bug.
+
 ### TenantClient (public key) management is split: a Tenant detail tab plus a top-level Security page for Root clients
 - **Context:** `TenantClient.TenantId` is nullable — Root clients (`IsRootClient =>
   TenantId is null`) aren't owned by any one tenant, unlike Scope. Nesting the whole
