@@ -12,6 +12,7 @@ import {
   TabsTrigger,
 } from "@novacore/frontend-next-shadcn";
 import { ScopeListPanel } from "@/features/scope";
+import { TenantClientListPanel } from "@/features/tenant-client";
 
 import { useAppTranslation } from "@/shared/i18n";
 import { useTenantDetailPage } from "@/features/tenant/components/TenantDetailPage/useTenantDetailPage";
@@ -45,6 +46,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
         <TabsList>
           <TabsTrigger value="details">{t("tenant.detail.tabDetails", "Details")}</TabsTrigger>
           <TabsTrigger value="scopes">{t("tenant.detail.tabScopes", "Scopes")}</TabsTrigger>
+          <TabsTrigger value="keys">{t("tenant.detail.tabKeys", "Keys")}</TabsTrigger>
         </TabsList>
         <TabsContent value="details">
           <dl className="grid gap-2 text-sm">
@@ -60,6 +62,9 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
         </TabsContent>
         <TabsContent value="scopes">
           <ScopeListPanel tenantId={tenant.id} />
+        </TabsContent>
+        <TabsContent value="keys">
+          <TenantClientListPanel tenantId={tenant.id} />
         </TabsContent>
       </Tabs>
     </PageContainer>

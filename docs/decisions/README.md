@@ -52,6 +52,25 @@ affect the ecosystem's architecture, not routine implementation choices.
   `shared/ui/` layer, if one emerges, should wrap `frontend-next-shadcn` exports rather
   than raw Radix primitives.
 
+### TenantClient (public key) management is split: a Tenant detail tab plus a top-level Security page for Root clients
+- **Context:** `TenantClient.TenantId` is nullable — Root clients (`IsRootClient =>
+  TenantId is null`) aren't owned by any one tenant, unlike Scope. Nesting the whole
+  feature under Tenant detail the way Scope was wouldn't cover Root clients at all.
+- **Decision:** `TenantClientListPanel` (shared component, takes `tenantId: string |
+  null`) is reused in two places: a "Keys" tab on `/tenants/[id]` (`tenantId` = that
+  tenant), and a new top-level `/security` page gated on `Permissions.Root` (`tenantId =
+  null`, showing Root clients). One feature, two entry points, not two separate
+  implementations.
+- **Why:** Matches the actual domain shape (a client can belong to a tenant or be
+  global) instead of forcing a per-tenant-only or global-only model that doesn't fit.
+- **Divergence:** N/A, new pattern — first feature in nova-console with a nullable
+  tenant scope. Zero backend endpoints exist for `TenantClient` at all (domain +
+  persistence only, no CQRS/API wired yet) — same dev-adapter isolation as Tenant/Scope.
+- **Security handling:** the adapter's generated `publicKey` value is shown once, on
+  creation/rotation, in a dedicated reveal dialog — never persisted to localStorage/
+  sessionStorage/URL, never logged, matching the original task brief's explicit
+  requirement to never expose key material outside a one-time display.
+
 ### Scope Management is scoped per-tenant (Tenant detail page), fully dev-adapter-backed
 - **Context:** Scope is a hierarchical org unit (branch/agency/dealer/region) owned by a
   Tenant (`Scope.TenantId`, `ParentScopeId`, `Path`, `Level`). Unlike Tenant, **zero**

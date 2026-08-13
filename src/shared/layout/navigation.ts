@@ -25,6 +25,13 @@ export const navigationConfig: NavigationConfig = [
         match: "prefix",
         permission: Permissions.Root,
       },
+      {
+        id: "security",
+        label: "Security",
+        href: "/security",
+        match: "prefix",
+        permission: Permissions.Root,
+      },
     ],
   },
 ];
