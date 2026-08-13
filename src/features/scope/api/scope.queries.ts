@@ -39,3 +39,14 @@ export function useUpdateScopeMutation(tenantId: string, id: string) {
     },
   });
 }
+
+export function useSetScopeActiveMutation(tenantId: string, id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (isActive: boolean) => scopeService.setActive(tenantId, id, isActive),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: scopeKeys.lists(tenantId) });
+    },
+  });
+}
