@@ -11,18 +11,26 @@ export function useTenantFormDialog(onOpenChange: (open: boolean) => void) {
   const createTenantMutation = useCreateTenantMutation();
 
   const onSubmit = async (values: CreateTenantFormValues) => {
-    await createTenantMutation.mutateAsync({
-      code: values.code,
-      name: values.name,
-      logoUrl: values.logoUrl || undefined,
-    });
-    form.reset();
-    onOpenChange(false);
+    try {
+      await createTenantMutation.mutateAsync({
+        code: values.code,
+        name: values.name,
+        logoUrl: values.logoUrl || undefined,
+      });
+      form.reset();
+      onOpenChange(false);
+    } catch {
+      // surfaced via errorMessage below
+    }
   };
+
+  const errorMessage =
+    createTenantMutation.error instanceof Error ? createTenantMutation.error.message : null;
 
   return {
     form,
     onSubmit,
     isSubmitting: createTenantMutation.isPending,
+    errorMessage,
   };
 }

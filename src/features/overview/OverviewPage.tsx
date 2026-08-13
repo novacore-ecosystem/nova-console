@@ -1,14 +1,25 @@
+"use client";
+
 import { ContentPanel, PageContainer, ShellPageHeader } from "@novacore/frontend-next-shadcn";
 
+import { useAppTranslation } from "@/shared/i18n";
+
 export function OverviewPage() {
+  const { t } = useAppTranslation();
+
   return (
     <PageContainer>
       <ShellPageHeader
-        title="Overview"
-        description="Nova Console — NovaCore's central administration console."
+        title={t("app.name", "Nova Console")}
+        description={t("app.description", "NovaCore's central administration console")}
       />
       <ContentPanel>
-        <p>Tenant, Scope, Security, and Localization management land here as they ship.</p>
+        <p>
+          {t(
+            "overview.summary",
+            "Manage tenants, scopes, client keys, and localization from the navigation on the left.",
+          )}
+        </p>
       </ContentPanel>
     </PageContainer>
   );

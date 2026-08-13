@@ -28,10 +28,8 @@ export interface ScopeFormDialogProps {
 
 export function ScopeFormDialog({ tenantId, scopes, open, onOpenChange }: ScopeFormDialogProps) {
   const { t } = useAppTranslation();
-  const { form, onSubmit, parentScopeId, setParentScopeId, isSubmitting } = useScopeFormDialog(
-    tenantId,
-    onOpenChange,
-  );
+  const { form, onSubmit, parentScopeId, setParentScopeId, isSubmitting, errorMessage } =
+    useScopeFormDialog(tenantId, onOpenChange);
   const {
     register,
     formState: { errors },
@@ -76,6 +74,11 @@ export function ScopeFormDialog({ tenantId, scopes, open, onOpenChange }: ScopeF
           >
             <Input id="description" invalid={!!errors.description} {...register("description")} />
           </FormField>
+          {errorMessage ? (
+            <p role="alert" className="text-sm text-destructive">
+              {errorMessage}
+            </p>
+          ) : null}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {t("common.actions.cancel", "Cancel")}

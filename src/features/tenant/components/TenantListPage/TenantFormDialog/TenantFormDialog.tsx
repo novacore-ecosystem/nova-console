@@ -22,7 +22,7 @@ export interface TenantFormDialogProps {
 
 export function TenantFormDialog({ open, onOpenChange }: TenantFormDialogProps) {
   const { t } = useAppTranslation();
-  const { form, onSubmit, isSubmitting } = useTenantFormDialog(onOpenChange);
+  const { form, onSubmit, isSubmitting, errorMessage } = useTenantFormDialog(onOpenChange);
   const {
     register,
     formState: { errors },
@@ -57,6 +57,11 @@ export function TenantFormDialog({ open, onOpenChange }: TenantFormDialogProps) 
           >
             <Input id="logoUrl" invalid={!!errors.logoUrl} {...register("logoUrl")} />
           </FormField>
+          {errorMessage ? (
+            <p role="alert" className="text-sm text-destructive">
+              {errorMessage}
+            </p>
+          ) : null}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {t("common.actions.cancel", "Cancel")}

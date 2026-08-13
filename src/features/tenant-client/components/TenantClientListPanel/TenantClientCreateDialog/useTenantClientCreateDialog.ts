@@ -16,8 +16,12 @@ export function useTenantClientCreateDialog(tenantId: string | null) {
   const [createdClient, setCreatedClient] = useState<TenantClientRecord | null>(null);
 
   const onSubmit = async (values: CreateTenantClientFormValues) => {
-    const record = await createMutation.mutateAsync({ name: values.name });
-    setCreatedClient(record);
+    try {
+      const record = await createMutation.mutateAsync({ name: values.name });
+      setCreatedClient(record);
+    } catch {
+      // surfaced via errorMessage below
+    }
   };
 
   const reset = () => {
@@ -25,11 +29,14 @@ export function useTenantClientCreateDialog(tenantId: string | null) {
     setCreatedClient(null);
   };
 
+  const errorMessage = createMutation.error instanceof Error ? createMutation.error.message : null;
+
   return {
     form,
     onSubmit,
     isSubmitting: createMutation.isPending,
     createdClient,
     reset,
+    errorMessage,
   };
 }

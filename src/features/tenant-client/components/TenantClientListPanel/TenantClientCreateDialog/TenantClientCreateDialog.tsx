@@ -27,7 +27,7 @@ export function TenantClientCreateDialog({
   onOpenChange,
 }: TenantClientCreateDialogProps) {
   const { t } = useAppTranslation();
-  const { form, onSubmit, isSubmitting, createdClient, reset } =
+  const { form, onSubmit, isSubmitting, createdClient, reset, errorMessage } =
     useTenantClientCreateDialog(tenantId);
   const {
     register,
@@ -83,6 +83,11 @@ export function TenantClientCreateDialog({
               >
                 <Input id="name" invalid={!!errors.name} {...register("name")} />
               </FormField>
+              {errorMessage ? (
+                <p role="alert" className="text-sm text-destructive">
+                  {errorMessage}
+                </p>
+              ) : null}
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={close}>
                   {t("common.actions.cancel", "Cancel")}

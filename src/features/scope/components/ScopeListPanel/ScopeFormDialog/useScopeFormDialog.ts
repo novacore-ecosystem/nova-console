@@ -14,16 +14,23 @@ export function useScopeFormDialog(tenantId: string, onOpenChange: (open: boolea
   const createScopeMutation = useCreateScopeMutation(tenantId);
 
   const onSubmit = async (values: CreateScopeFormValues) => {
-    await createScopeMutation.mutateAsync({
-      parentScopeId,
-      code: values.code,
-      name: values.name,
-      description: values.description || undefined,
-    });
-    form.reset();
-    setParentScopeId(null);
-    onOpenChange(false);
+    try {
+      await createScopeMutation.mutateAsync({
+        parentScopeId,
+        code: values.code,
+        name: values.name,
+        description: values.description || undefined,
+      });
+      form.reset();
+      setParentScopeId(null);
+      onOpenChange(false);
+    } catch {
+      // surfaced via errorMessage below
+    }
   };
+
+  const errorMessage =
+    createScopeMutation.error instanceof Error ? createScopeMutation.error.message : null;
 
   return {
     form,
@@ -31,5 +38,6 @@ export function useScopeFormDialog(tenantId: string, onOpenChange: (open: boolea
     parentScopeId,
     setParentScopeId,
     isSubmitting: createScopeMutation.isPending,
+    errorMessage,
   };
 }
