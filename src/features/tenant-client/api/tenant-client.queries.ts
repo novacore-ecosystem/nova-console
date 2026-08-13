@@ -40,3 +40,15 @@ export function useRotateTenantClientMutation(tenantId: string | null) {
     },
   });
 }
+
+export function useRevokeTenantClientMutation(tenantId: string | null) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+      tenantClientService.revoke(id, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tenantClientKeys.lists(tenantId) });
+    },
+  });
+}

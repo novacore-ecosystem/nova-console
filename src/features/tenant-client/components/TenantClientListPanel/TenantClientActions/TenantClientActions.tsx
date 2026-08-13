@@ -22,25 +22,34 @@ export interface TenantClientActionsProps {
 export function TenantClientActions({ client }: TenantClientActionsProps) {
   const { t } = useAppTranslation();
   const {
-    isConfirmOpen,
-    openConfirm,
-    setConfirmOpen,
+    isRotateConfirmOpen,
+    openRotateConfirm,
+    setRotateConfirmOpen,
     confirmRotate,
     isRotating,
     rotatedClient,
     closeReveal,
+    isRevokeConfirmOpen,
+    openRevokeConfirm,
+    setRevokeConfirmOpen,
+    confirmRevoke,
+    isRevoking,
   } = useTenantClientActions(client);
 
   if (client.status !== "active") return null;
 
   return (
-    <>
-      <Button variant="ghost" size="sm" onClick={openConfirm}>
+    <div className="flex items-center gap-2">
+      <Button variant="ghost" size="sm" onClick={openRotateConfirm}>
         {t("tenantClient.actions.rotate", "Rotate")}
       </Button>
+      <Button variant="ghost" size="sm" onClick={openRevokeConfirm}>
+        {t("tenantClient.actions.revoke", "Revoke")}
+      </Button>
+
       <ConfirmDialog
-        open={isConfirmOpen}
-        onOpenChange={setConfirmOpen}
+        open={isRotateConfirmOpen}
+        onOpenChange={setRotateConfirmOpen}
         title={t("tenantClient.rotate.title", "Rotate this key?")}
         description={t(
           "tenantClient.rotate.description",
@@ -51,6 +60,22 @@ export function TenantClientActions({ client }: TenantClientActionsProps) {
         loading={isRotating}
         onConfirm={confirmRotate}
       />
+
+      <ConfirmDialog
+        open={isRevokeConfirmOpen}
+        onOpenChange={setRevokeConfirmOpen}
+        title={t("tenantClient.revoke.title", "Revoke this key?")}
+        description={t(
+          "tenantClient.revoke.description",
+          `"${client.name}" will stop working immediately. This cannot be undone.`,
+          { name: client.name },
+        )}
+        confirmLabel={t("tenantClient.actions.revoke", "Revoke")}
+        confirmVariant="destructive"
+        loading={isRevoking}
+        onConfirm={confirmRevoke}
+      />
+
       <Dialog open={!!rotatedClient} onOpenChange={(open) => !open && closeReveal()}>
         <DialogContent>
           <DialogHeader>
@@ -81,6 +106,6 @@ export function TenantClientActions({ client }: TenantClientActionsProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

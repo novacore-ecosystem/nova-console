@@ -1,6 +1,7 @@
 import {
   createTenantClient,
   getTenantClients,
+  revokeTenantClient,
   rotateTenantClient,
   type CreateTenantClientInput,
   type TenantClientRecord,
@@ -15,5 +16,8 @@ export const tenantClientService = {
   },
   async rotate(id: string): Promise<TenantClientRecord> {
     return rotateTenantClient(id);
+  },
+  async revoke(id: string, reason: string): Promise<TenantClientRecord> {
+    return revokeTenantClient(id, reason);
   },
 };
