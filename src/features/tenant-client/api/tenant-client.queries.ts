@@ -29,3 +29,14 @@ export function useCreateTenantClientMutation(tenantId: string | null) {
     },
   });
 }
+
+export function useRotateTenantClientMutation(tenantId: string | null) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => tenantClientService.rotate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tenantClientKeys.lists(tenantId) });
+    },
+  });
+}

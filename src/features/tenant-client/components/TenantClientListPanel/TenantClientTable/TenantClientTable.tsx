@@ -6,6 +6,7 @@ import {
 } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
+import { TenantClientActions } from "@/features/tenant-client/components/TenantClientListPanel/TenantClientActions";
 import type { TenantClientRecord, TenantClientStatus } from "@/services/tenant-client";
 
 const STATUS_TONE: Record<TenantClientStatus, StatusTone> = {
@@ -44,6 +45,11 @@ export function TenantClientTable({ clients, loading, error, onRetry }: TenantCl
           tone={STATUS_TONE[client.status]}
         />
       ),
+    },
+    {
+      id: "actions",
+      header: "",
+      cell: (client) => <TenantClientActions client={client} />,
     },
   ];
 
