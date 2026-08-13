@@ -52,6 +52,23 @@ affect the ecosystem's architecture, not routine implementation choices.
   `shared/ui/` layer, if one emerges, should wrap `frontend-next-shadcn` exports rather
   than raw Radix primitives.
 
+### Scope Management is scoped per-tenant (Tenant detail page), fully dev-adapter-backed
+- **Context:** Scope is a hierarchical org unit (branch/agency/dealer/region) owned by a
+  Tenant (`Scope.TenantId`, `ParentScopeId`, `Path`, `Level`). Unlike Tenant, **zero**
+  backend endpoints exist for Scope — no real list to seed from at all (see
+  docs/reference/domain-mapping.md).
+- **Decision:** Scope Management lives inside a new Tenant detail page
+  (`/tenants/[id]`, "Scopes" tab), not as its own top-level nav item. The adapter is
+  seeded with a small static sample set per tenant, not from any real call.
+- **Why:** Scope only makes sense in the context of one Tenant (the domain model itself
+  requires a `TenantId`) — a global cross-tenant Scope list would misrepresent the
+  domain. Nesting under Tenant detail also matches how the data is actually owned.
+- **Divergence:** N/A, new pattern. Introduces the Tenant detail page (`/tenants/[id]`)
+  that Phase 4 didn't need — Tenant's list page had no click-through before this.
+- **UI shape:** flat table with a `path`/`level` column, not a tree view or nested
+  expand/collapse. `frontend-next-shadcn` has no tree component. A flat table matches
+  the existing DataTable pattern and avoids building a new UI primitive for one feature.
+
 ### Tenant Management reads real data, mutates through a seeded in-memory adapter
 - **Context:** `GET /tenants` is real (Root-only summary list). Create/update/
   activate/deactivate/get-by-id have no backend endpoint at all (see

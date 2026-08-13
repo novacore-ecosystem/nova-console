@@ -1,5 +1,6 @@
 import {
   createTenant,
+  getTenantById,
   getTenants,
   isSeeded,
   listTenants,
@@ -11,11 +12,19 @@ import {
   type UpdateTenantInput,
 } from "@/services/tenant";
 
+async function ensureSeeded(): Promise<void> {
+  if (!isSeeded()) seedTenants(await listTenants());
+}
+
 export const tenantService = {
   /** Seeds the dev adapter from the real endpoint on first call — see docs/decisions/README.md. */
   async list(): Promise<TenantRecord[]> {
-    if (!isSeeded()) seedTenants(await listTenants());
+    await ensureSeeded();
     return getTenants();
+  },
+  async getById(id: string): Promise<TenantRecord | null> {
+    await ensureSeeded();
+    return getTenantById(id);
   },
   async create(input: CreateTenantInput): Promise<TenantRecord> {
     return createTenant(input);

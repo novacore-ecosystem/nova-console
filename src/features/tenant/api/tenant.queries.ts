@@ -8,6 +8,7 @@ import type { CreateTenantInput, UpdateTenantInput } from "@/services/tenant";
 export const tenantKeys = {
   all: ["tenants"] as const,
   lists: () => [...tenantKeys.all, "list"] as const,
+  detail: (id: string) => [...tenantKeys.all, "detail", id] as const,
 };
 
 export function useTenantsQuery() {
@@ -17,13 +18,20 @@ export function useTenantsQuery() {
   });
 }
 
+export function useTenantQuery(id: string) {
+  return useQuery({
+    queryKey: tenantKeys.detail(id),
+    queryFn: () => tenantService.getById(id),
+  });
+}
+
 export function useCreateTenantMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: CreateTenantInput) => tenantService.create(input),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: tenantKeys.all });
     },
   });
 }
@@ -34,7 +42,7 @@ export function useUpdateTenantMutation(id: string) {
   return useMutation({
     mutationFn: (input: UpdateTenantInput) => tenantService.update(id, input),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: tenantKeys.all });
     },
   });
 }
@@ -45,7 +53,7 @@ export function useSetTenantActiveMutation(id: string) {
   return useMutation({
     mutationFn: (isActive: boolean) => tenantService.setActive(id, isActive),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: tenantKeys.all });
     },
   });
 }

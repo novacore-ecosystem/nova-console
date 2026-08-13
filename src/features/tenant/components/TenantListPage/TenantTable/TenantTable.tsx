@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DataTable, type DataTableColumn, StatusBadge } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
@@ -17,7 +18,18 @@ export function TenantTable({ tenants, loading, error, onRetry, onEdit }: Tenant
 
   const columns: DataTableColumn<TenantRecord>[] = [
     { id: "code", header: t("tenant.table.code", "Code") },
-    { id: "name", header: t("tenant.table.name", "Name") },
+    {
+      id: "name",
+      header: t("tenant.table.name", "Name"),
+      cell: (tenant) => (
+        <Link
+          href={`/tenants/${tenant.id}`}
+          className="font-medium underline-offset-4 hover:underline"
+        >
+          {tenant.name}
+        </Link>
+      ),
+    },
     {
       id: "status",
       header: t("tenant.table.status", "Status"),
