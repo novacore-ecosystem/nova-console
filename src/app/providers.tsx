@@ -13,7 +13,22 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AppTranslationProvider>
-        <AdminProvider theme={{ preset: "zinc-blue", mode: "system" }}>{children}</AdminProvider>
+        <AdminProvider
+          theme={{
+            preset: "zinc-blue",
+            mode: "system",
+            // Deep Indigo (#4338CA) — the Root/Identity/Control Plane brand color, applied
+            // strategically via primary/ring only (see docs/decisions/README.md and the task
+            // brief's "Indigo" section). The rest of the UI stays neutral zinc.
+            overrides: {
+              primary: "244 58% 51%",
+              "primary-foreground": "0 0% 98%",
+              ring: "244 58% 51%",
+            },
+          }}
+        >
+          {children}
+        </AdminProvider>
       </AppTranslationProvider>
     </QueryClientProvider>
   );
