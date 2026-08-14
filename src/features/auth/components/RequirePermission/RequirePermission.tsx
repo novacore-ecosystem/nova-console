@@ -1,13 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import {
-  ErrorState,
-  useAdminShell,
-  type PermissionRequirement,
-} from "@novacore/frontend-next-shadcn";
+import { ErrorState } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
+import { usePermissionCheck, type PermissionRequirement } from "@/features/auth/usePermissionCheck";
 
 export interface RequirePermissionProps {
   permission: PermissionRequirement;
@@ -23,7 +20,7 @@ export interface RequirePermissionProps {
  */
 export function RequirePermission({ permission, requireAll, children }: RequirePermissionProps) {
   const { t } = useAppTranslation();
-  const { checkPermission } = useAdminShell();
+  const checkPermission = usePermissionCheck();
 
   if (!checkPermission(permission, { requireAll })) {
     return (

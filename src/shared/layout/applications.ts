@@ -1,4 +1,9 @@
-import type { Application } from "@novacore/frontend-next-shadcn";
+export interface Application {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+}
 
 /**
  * The NovaCore ecosystem application switcher. Only Nova Console is implemented — do

@@ -1,4 +1,4 @@
-import { Button, ShellPageHeader } from "@novacore/frontend-next-shadcn";
+import { Button, PageHeader } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
 
@@ -10,7 +10,7 @@ export function TenantListHeader({ onCreateClick }: TenantListHeaderProps) {
   const { t } = useAppTranslation();
 
   return (
-    <ShellPageHeader
+    <PageHeader
       title={t("tenant.list.title", "Tenants")}
       description={t("tenant.list.description", "Manage NovaCore tenants.")}
       actions={<Button onClick={onCreateClick}>{t("tenant.list.newTenant", "New tenant")}</Button>}

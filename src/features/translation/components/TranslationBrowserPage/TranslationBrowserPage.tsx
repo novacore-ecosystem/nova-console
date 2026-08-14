@@ -3,17 +3,17 @@
 import { LOCALE_METADATA, type Locale } from "@novacore/frontend-foundation";
 import {
   PageContainer,
+  PageHeader,
   SearchInput,
   Select,
-  ShellPageHeader,
   Toolbar,
 } from "@novacore/frontend-next-shadcn";
 
-import { useAppTranslation } from "@/shared/i18n";
-import { TranslationTable } from "@/features/translation/components/TranslationBrowserPage/TranslationTable";
 import { TranslationEditDialog } from "@/features/translation/components/TranslationBrowserPage/TranslationEditDialog";
-import { TRANSLATION_LOCALES } from "@/features/translation/translation.catalog";
+import { TranslationTable } from "@/features/translation/components/TranslationBrowserPage/TranslationTable";
 import { useTranslationBrowserPage } from "@/features/translation/components/TranslationBrowserPage/useTranslationBrowserPage";
+import { TRANSLATION_LOCALES } from "@/features/translation/translation.catalog";
+import { useAppTranslation } from "@/shared/i18n";
 
 export function TranslationBrowserPage() {
   const { t } = useAppTranslation();
@@ -32,7 +32,7 @@ export function TranslationBrowserPage() {
 
   return (
     <PageContainer>
-      <ShellPageHeader
+      <PageHeader
         title={t("translation.title", "Localization")}
         description={t("translation.description", "Browse and override translation values.")}
       />

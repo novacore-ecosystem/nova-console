@@ -4,7 +4,7 @@ import {
   ErrorState,
   LoadingState,
   PageContainer,
-  ShellPageHeader,
+  PageHeader,
   StatusBadge,
   Tabs,
   TabsContent,
@@ -34,7 +34,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
 
   return (
     <PageContainer>
-      <ShellPageHeader
+      <PageHeader
         title={tenant.name}
         description={tenant.code}
         actions={

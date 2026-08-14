@@ -5,48 +5,65 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   AdminLayout,
-  AdminShellProvider,
-  type PermissionChecker,
+  AdminSidebar,
+  AdminSidebarSection,
+  AdminSidebarItem,
+  AdminHeader,
+  Button,
 } from "@novacore/frontend-next-shadcn";
-import { hasAllPermissions, hasAnyPermission } from "@novacore/frontend-foundation";
 
-import { navigationConfig } from "@/shared/layout/navigation";
-import { applications } from "@/shared/layout/applications";
+import { navigationConfig, type NavigationItem } from "@/shared/layout/navigation";
 import { useSessionStore } from "@/shared/stores/session.store";
-import { useLogoutMutation } from "@/features/auth";
+import { useLogoutMutation, usePermissionCheck } from "@/features/auth";
+import { useAppTranslation } from "@/shared/i18n";
 
 /**
- * Config-driven shell composition (see docs/reference/frontend-nextjs.md — "use the
- * config-driven path, not the manual one"). `user`/`hasPermission` come from the
- * session store (see docs/decisions/README.md for why permissions are a stubbed
- * adapter today, not real backend-verified data).
+ * Composes the shell from the shared package's presentation-only primitives.
+ * `@novacore/frontend-next-shadcn`'s admin components are contract-only — nav
+ * rendering and permission resolution are the consuming app's job (see
+ * `PermissionGate`'s docstring in that package) — so filtering by permission,
+ * active-route matching, and the logged-in user's identity all live here.
  */
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { t } = useAppTranslation();
   const user = useSessionStore((state) => state.user);
   const logoutMutation = useLogoutMutation();
+  const checkPermission = usePermissionCheck();
 
-  const checkPermission: PermissionChecker = (requirement, options) => {
-    const owned = user?.permissions ?? [];
-    const required = Array.isArray(requirement) ? requirement : [requirement];
-    return options?.requireAll
-      ? hasAllPermissions(owned, required)
-      : hasAnyPermission(owned, required);
-  };
+  const isActive = (item: NavigationItem) =>
+    item.match === "exact" ? pathname === item.href : pathname.startsWith(item.href);
+
+  const sidebar = (
+    <AdminSidebar>
+      {navigationConfig.map((group) => (
+        <AdminSidebarSection key={group.id}>
+          {group.items
+            .filter((item) => !item.permission || checkPermission(item.permission))
+            .map((item) => (
+              <Link key={item.id} href={item.href}>
+                <AdminSidebarItem active={isActive(item)}>{item.label}</AdminSidebarItem>
+              </Link>
+            ))}
+        </AdminSidebarSection>
+      ))}
+    </AdminSidebar>
+  );
+
+  const header = (
+    <AdminHeader>
+      <span className="font-semibold">{t("app.name", "Nova Console")}</span>
+      <div className="flex-1" />
+      {user ? <span className="text-sm text-muted-foreground">{user.name}</span> : null}
+      <Button variant="ghost" size="sm" onClick={() => logoutMutation.mutate()}>
+        {t("auth.logout", "Log out")}
+      </Button>
+    </AdminHeader>
+  );
 
   return (
-    <AdminShellProvider
-      branding={{ title: "Nova Console" }}
-      navigation={navigationConfig}
-      applications={applications}
-      currentApplicationId="nova-console"
-      pathname={pathname}
-      linkComponent={Link}
-      user={user ? { id: user.id, name: user.name, email: user.email } : null}
-      hasPermission={checkPermission}
-      onLogout={() => logoutMutation.mutate()}
-    >
-      <AdminLayout>{children}</AdminLayout>
-    </AdminShellProvider>
+    <AdminLayout sidebar={sidebar} header={header}>
+      {children}
+    </AdminLayout>
   );
 }

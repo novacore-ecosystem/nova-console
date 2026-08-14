@@ -1,5 +1,19 @@
-import type { NavigationConfig } from "@novacore/frontend-next-shadcn";
-import { Permissions } from "@novacore/frontend-foundation";
+import { Permissions, type Permission } from "@novacore/frontend-foundation";
+
+export interface NavigationItem {
+  id: string;
+  label: string;
+  href: string;
+  match: "exact" | "prefix";
+  permission?: Permission;
+}
+
+export interface NavigationGroup {
+  id: string;
+  items: NavigationItem[];
+}
+
+export type NavigationConfig = NavigationGroup[];
 
 /**
  * Only routes that actually exist. Add a group's entries in the same commit that adds
