@@ -651,31 +651,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@novacore/frontend-foundation@file:../../../frontend-foundation::locator=%40novacore%2Ffrontend-next-shadcn%40file%3A..%2FCommon%2Ffrontend-nextjs%2Fpackages%2Fshadcn%23..%2FCommon%2Ffrontend-nextjs%2Fpackages%2Fshadcn%3A%3Ahash%3D3300d3%26locator%3D%2540novacore%252Fnova-console%2540workspace%253A.":
+"@novacore/frontend-foundation@file:../../../frontend-foundation::locator=%40novacore%2Ffrontend-next-shadcn%40file%3A..%2Fcommon%2Ffrontend-nextjs%2Fpackages%2Fshadcn%23..%2Fcommon%2Ffrontend-nextjs%2Fpackages%2Fshadcn%3A%3Ahash%3D98e624%26locator%3D%2540novacore%252Fnova-console%2540workspace%253A.":
   version: 0.1.0
-  resolution: "@novacore/frontend-foundation@file:../../../frontend-foundation#../../../frontend-foundation::hash=1860bf&locator=%40novacore%2Ffrontend-next-shadcn%40file%3A..%2FCommon%2Ffrontend-nextjs%2Fpackages%2Fshadcn%23..%2FCommon%2Ffrontend-nextjs%2Fpackages%2Fshadcn%3A%3Ahash%3D3300d3%26locator%3D%2540novacore%252Fnova-console%2540workspace%253A."
+  resolution: "@novacore/frontend-foundation@file:../../../frontend-foundation#../../../frontend-foundation::hash=e0692e&locator=%40novacore%2Ffrontend-next-shadcn%40file%3A..%2Fcommon%2Ffrontend-nextjs%2Fpackages%2Fshadcn%23..%2Fcommon%2Ffrontend-nextjs%2Fpackages%2Fshadcn%3A%3Ahash%3D98e624%26locator%3D%2540novacore%252Fnova-console%2540workspace%253A."
   dependencies:
     "@microsoft/signalr": "npm:^8.0.7"
     axios: "npm:^1.7.9"
     libphonenumber-js: "npm:^1.13.10"
-  checksum: 10c0/ab1467d781e4064e1efe6c0054e5a7d92b343021881d958a7227b31d2d79f36a6baa58a50228c90cebb3a507b2cd1b6cd2f7337a72be6231ee4ba0299aa1cb80
+  checksum: 10c0/6868c3fa7563bf51d10876955f14fe63678f948ededd0c0299f586db7583aecb1df6fd55354055191ee7ecb417c294b9b8e9adb9b01aaa5260eca329c401f57c
   languageName: node
   linkType: hard
 
-"@novacore/frontend-foundation@file:../Common/frontend-foundation::locator=%40novacore%2Fnova-console%40workspace%3A.":
+"@novacore/frontend-foundation@file:../common/frontend-foundation::locator=%40novacore%2Fnova-console%40workspace%3A.":
   version: 0.1.0
-  resolution: "@novacore/frontend-foundation@file:../Common/frontend-foundation#../Common/frontend-foundation::hash=1860bf&locator=%40novacore%2Fnova-console%40workspace%3A."
+  resolution: "@novacore/frontend-foundation@file:../common/frontend-foundation#../common/frontend-foundation::hash=e0692e&locator=%40novacore%2Fnova-console%40workspace%3A."
   dependencies:
     "@microsoft/signalr": "npm:^8.0.7"
     axios: "npm:^1.7.9"
     libphonenumber-js: "npm:^1.13.10"
-  checksum: 10c0/ab1467d781e4064e1efe6c0054e5a7d92b343021881d958a7227b31d2d79f36a6baa58a50228c90cebb3a507b2cd1b6cd2f7337a72be6231ee4ba0299aa1cb80
+  checksum: 10c0/6868c3fa7563bf51d10876955f14fe63678f948ededd0c0299f586db7583aecb1df6fd55354055191ee7ecb417c294b9b8e9adb9b01aaa5260eca329c401f57c
   languageName: node
   linkType: hard
 
-"@novacore/frontend-next-shadcn@file:../Common/frontend-nextjs/packages/shadcn::locator=%40novacore%2Fnova-console%40workspace%3A.":
+"@novacore/frontend-next-shadcn@file:../common/frontend-nextjs/packages/shadcn::locator=%40novacore%2Fnova-console%40workspace%3A.":
   version: 0.1.0
-  resolution: "@novacore/frontend-next-shadcn@file:../Common/frontend-nextjs/packages/shadcn#../Common/frontend-nextjs/packages/shadcn::hash=3300d3&locator=%40novacore%2Fnova-console%40workspace%3A."
+  resolution: "@novacore/frontend-next-shadcn@file:../common/frontend-nextjs/packages/shadcn#../common/frontend-nextjs/packages/shadcn::hash=98e624&locator=%40novacore%2Fnova-console%40workspace%3A."
   dependencies:
     "@novacore/frontend-foundation": "file:../../../frontend-foundation"
     "@radix-ui/react-avatar": "npm:^1.1.2"
@@ -698,7 +698,7 @@ __metadata:
     next: ^14.0.0 || ^15.0.0
     react: ^18.3.0 || ^19.0.0
     react-dom: ^18.3.0 || ^19.0.0
-  checksum: 10c0/6dbfd102ff20927a792bc07f4ca9c7c30019be257f18e93e90b174a94be8274b56db306e59f7a6eac59469a38f93a61cf42eb55aeafeb599a85eaaa2a45ad927
+  checksum: 10c0/0baf53dcc00d5849f373b62bb48ee752411e974c6c5dd9a440964800459ed07054228dd4976c332e0eccc9d72ca120149c949b5b0f206a562823cbfe2bc0bb89
   languageName: node
   linkType: hard
 
@@ -708,8 +708,8 @@ __metadata:
   dependencies:
     "@eslint/eslintrc": "npm:^3.2.0"
     "@hookform/resolvers": "npm:^5.7.1"
-    "@novacore/frontend-foundation": "file:../Common/frontend-foundation"
-    "@novacore/frontend-next-shadcn": "file:../Common/frontend-nextjs/packages/shadcn"
+    "@novacore/frontend-foundation": "file:../common/frontend-foundation"
+    "@novacore/frontend-next-shadcn": "file:../common/frontend-nextjs/packages/shadcn"
     "@tanstack/react-query": "npm:^5.65.0"
     "@types/node": "npm:^22.10.7"
     "@types/react": "npm:^18.3.18"

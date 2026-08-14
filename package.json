@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",
-    "@novacore/frontend-foundation": "file:../Common/frontend-foundation",
-    "@novacore/frontend-next-shadcn": "file:../Common/frontend-nextjs/packages/shadcn",
+    "@novacore/frontend-foundation": "file:../common/frontend-foundation",
+    "@novacore/frontend-next-shadcn": "file:../common/frontend-nextjs/packages/shadcn",
     "@tanstack/react-query": "^5.65.0",
     "next": "^15.1.6",
     "react": "^18.3.1",
