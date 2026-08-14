@@ -1,18 +1,13 @@
-import {
-  DataTable,
-  type DataTableColumn,
-  StatusBadge,
-  type StatusTone,
-} from "@novacore/frontend-next-shadcn";
+import { formatDateTime } from "@novacore/frontend-foundation";
+import { DataTable, type DataTableColumn, StatusBadge, type StatusTone } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
-import { TenantClientActions } from "@/features/tenant-client/components/TenantClientListPanel/TenantClientActions";
-import type { TenantClientRecord, TenantClientStatus } from "@/services/tenant-client";
+import type { TenantClientSummaryDto } from "@/services/tenant";
 
-const STATUS_TONE: Record<TenantClientStatus, StatusTone> = {
-  active: "success",
-  revoked: "destructive",
-  expired: "neutral",
+const STATUS_TONE: Record<string, StatusTone> = {
+  Active: "success",
+  Revoked: "destructive",
+  Expired: "neutral",
 };
 
 function maskKey(key: string): string {
@@ -20,16 +15,14 @@ function maskKey(key: string): string {
 }
 
 export interface TenantClientTableProps {
-  clients: TenantClientRecord[];
-  loading: boolean;
-  error: boolean;
-  onRetry: () => void;
+  clients: TenantClientSummaryDto[];
 }
 
-export function TenantClientTable({ clients, loading, error, onRetry }: TenantClientTableProps) {
+/** Read-only — clients only ever change via rotation (see TenantClientRotateAction), never a per-row action. */
+export function TenantClientTable({ clients }: TenantClientTableProps) {
   const { t } = useAppTranslation();
 
-  const columns: DataTableColumn<TenantClientRecord>[] = [
+  const columns: DataTableColumn<TenantClientSummaryDto>[] = [
     { id: "name", header: t("tenantClient.table.name", "Name") },
     {
       id: "publicKey",
@@ -41,15 +34,23 @@ export function TenantClientTable({ clients, loading, error, onRetry }: TenantCl
       header: t("tenantClient.table.status", "Status"),
       cell: (client) => (
         <StatusBadge
-          label={t(`tenantClient.status.${client.status}`, client.status)}
-          tone={STATUS_TONE[client.status]}
+          label={t(`tenantClient.status.${client.status.toLowerCase()}`, client.status)}
+          tone={STATUS_TONE[client.status] ?? "neutral"}
         />
       ),
     },
     {
-      id: "actions",
-      header: "",
-      cell: (client) => <TenantClientActions client={client} />,
+      id: "expiresAt",
+      header: t("tenantClient.table.expiresAt", "Expires"),
+      cell: (client) =>
+        client.expiresAt
+          ? formatDateTime(client.expiresAt)
+          : t("tenantClient.table.noExpiry", "Never"),
+    },
+    {
+      id: "revokedAt",
+      header: t("tenantClient.table.revokedAt", "Revoked"),
+      cell: (client) => (client.revokedAt ? formatDateTime(client.revokedAt) : "—"),
     },
   ];
 
@@ -58,9 +59,7 @@ export function TenantClientTable({ clients, loading, error, onRetry }: TenantCl
       data={clients}
       columns={columns}
       getRowId={(client) => client.id}
-      loading={loading}
-      error={error ? t("tenantClient.list.loadError", "Failed to load keys.") : undefined}
-      onRetry={onRetry}
+      loading={false}
       emptyMessage={t("tenantClient.list.empty", "No keys found.")}
     />
   );

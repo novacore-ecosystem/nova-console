@@ -1,50 +1,33 @@
-"use client";
-
-import { Button, PageSection } from "@novacore/frontend-next-shadcn";
+import { PageSection } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
 import { TenantClientTable } from "@/features/tenant-client/components/TenantClientListPanel/TenantClientTable";
-import { TenantClientCreateDialog } from "@/features/tenant-client/components/TenantClientListPanel/TenantClientCreateDialog";
-import { useTenantClientListPanel } from "@/features/tenant-client/components/TenantClientListPanel/useTenantClientListPanel";
+import { TenantClientRotateAction } from "@/features/tenant-client/components/TenantClientListPanel/TenantClientRotateAction";
+import type { TenantClientSummaryDto } from "@/services/tenant";
 
 export interface TenantClientListPanelProps {
-  tenantId: string | null;
+  tenantId: string;
+  clients: TenantClientSummaryDto[];
 }
 
-export function TenantClientListPanel({ tenantId }: TenantClientListPanelProps) {
+/**
+ * Clients are embedded in `GetTenant` (`TenantDetailDto.clients`), never fetched
+ * standalone — there is no list/create/revoke endpoint, only rotate. See
+ * docs/reference/domain-mapping.md's TenantClient section.
+ */
+export function TenantClientListPanel({ tenantId, clients }: TenantClientListPanelProps) {
   const { t } = useAppTranslation();
-  const {
-    clients,
-    isLoading,
-    isError,
-    refetch,
-    isCreateDialogOpen,
-    openCreateDialog,
-    setCreateDialogOpen,
-  } = useTenantClientListPanel(tenantId);
 
   return (
     <PageSection
-      title={t("tenantClient.list.title", "Client keys")}
+      title={t("tenantClient.list.title", "Client key")}
       description={t(
         "tenantClient.list.description",
-        "Pre-login client identification keys (X-Tenant-Client-Key).",
+        "The pre-login client identification key (X-Tenant-Client-Key) this tenant's own application uses to resolve itself before a user logs in.",
       )}
-      actions={
-        <Button onClick={openCreateDialog}>{t("tenantClient.list.newKey", "New key")}</Button>
-      }
+      actions={<TenantClientRotateAction tenantId={tenantId} />}
     >
-      <TenantClientTable
-        clients={clients}
-        loading={isLoading}
-        error={isError}
-        onRetry={() => refetch()}
-      />
-      <TenantClientCreateDialog
-        tenantId={tenantId}
-        open={isCreateDialogOpen}
-        onOpenChange={setCreateDialogOpen}
-      />
+      <TenantClientTable clients={clients} />
     </PageSection>
   );
 }
