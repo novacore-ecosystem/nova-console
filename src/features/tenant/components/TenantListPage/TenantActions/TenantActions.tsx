@@ -4,55 +4,70 @@ import { Button, ConfirmDialog } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
 import { useTenantActions } from "@/features/tenant/components/TenantListPage/TenantActions/useTenantActions";
-import type { TenantRecord } from "@/services/tenant";
+import type { TenantSummaryDto } from "@/services/tenant";
 
 export interface TenantActionsProps {
-  tenant: TenantRecord;
-  onEdit: (tenant: TenantRecord) => void;
+  tenant: TenantSummaryDto;
 }
 
-export function TenantActions({ tenant, onEdit }: TenantActionsProps) {
+export function TenantActions({ tenant }: TenantActionsProps) {
   const { t } = useAppTranslation();
-  const { isConfirmOpen, openConfirm, setConfirmOpen, confirmToggle, isSubmitting } =
-    useTenantActions(tenant);
+  const {
+    isDisableConfirmOpen,
+    openDisableConfirm,
+    setDisableConfirmOpen,
+    confirmDisable,
+    isDisabling,
+    disableError,
+    isDeleteConfirmOpen,
+    openDeleteConfirm,
+    setDeleteConfirmOpen,
+    confirmDelete,
+    isDeleting,
+    deleteError,
+  } = useTenantActions(tenant);
 
   return (
     <div className="flex items-center gap-2">
-      <Button variant="ghost" size="sm" onClick={() => onEdit(tenant)}>
-        {t("common.actions.edit", "Edit")}
+      {tenant.isActive ? (
+        <Button variant="ghost" size="sm" onClick={openDisableConfirm}>
+          {t("tenant.actions.disable", "Disable")}
+        </Button>
+      ) : null}
+      <Button variant="ghost" size="sm" className="text-destructive" onClick={openDeleteConfirm}>
+        {t("common.actions.delete", "Delete")}
       </Button>
-      <Button variant="ghost" size="sm" onClick={openConfirm}>
-        {tenant.isActive
-          ? t("tenant.actions.deactivate", "Deactivate")
-          : t("tenant.actions.activate", "Activate")}
-      </Button>
+
       <ConfirmDialog
-        open={isConfirmOpen}
-        onOpenChange={setConfirmOpen}
-        title={
-          tenant.isActive
-            ? t("tenant.deactivate.title", "Deactivate tenant?")
-            : t("tenant.activate.title", "Activate tenant?")
-        }
-        description={
-          tenant.isActive
-            ? t(
-                "tenant.deactivate.description",
-                `"${tenant.name}" will lose access until reactivated.`,
-                { name: tenant.name },
-              )
-            : t("tenant.activate.description", `"${tenant.name}" will regain access.`, {
-                name: tenant.name,
-              })
-        }
-        confirmLabel={
-          tenant.isActive
-            ? t("tenant.actions.deactivate", "Deactivate")
-            : t("tenant.actions.activate", "Activate")
-        }
-        confirmVariant={tenant.isActive ? "destructive" : "primary"}
-        loading={isSubmitting}
-        onConfirm={confirmToggle}
+        open={isDisableConfirmOpen}
+        onOpenChange={setDisableConfirmOpen}
+        title={t("tenant.disable.title", "Disable tenant?")}
+        description={t(
+          "tenant.disable.description",
+          `"${tenant.name}" will lose access immediately. It can only be re-enabled by contacting engineering — there is no self-service re-enable yet.`,
+          { name: tenant.name },
+        )}
+        confirmLabel={t("tenant.actions.disable", "Disable")}
+        confirmVariant="destructive"
+        loading={isDisabling}
+        error={disableError}
+        onConfirm={confirmDisable}
+      />
+
+      <ConfirmDialog
+        open={isDeleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title={t("tenant.delete.title", "Delete tenant?")}
+        description={t(
+          "tenant.delete.description",
+          `"${tenant.name}" will be permanently removed from the tenant list. This cannot be undone.`,
+          { name: tenant.name },
+        )}
+        confirmLabel={t("common.actions.delete", "Delete")}
+        confirmVariant="destructive"
+        loading={isDeleting}
+        error={deleteError}
+        onConfirm={confirmDelete}
       />
     </div>
   );

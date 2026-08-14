@@ -2,23 +2,38 @@
 
 import { useState } from "react";
 
-import { useSetTenantActiveMutation } from "@/features/tenant/api/tenant.queries";
-import type { TenantRecord } from "@/services/tenant";
+import { useDeleteTenantMutation, useDisableTenantMutation } from "@/features/tenant/api/tenant.queries";
+import type { TenantSummaryDto } from "@/services/tenant";
 
-export function useTenantActions(tenant: TenantRecord) {
-  const [isConfirmOpen, setConfirmOpen] = useState(false);
-  const setActiveMutation = useSetTenantActiveMutation(tenant.id);
+export function useTenantActions(tenant: TenantSummaryDto) {
+  const [isDisableConfirmOpen, setDisableConfirmOpen] = useState(false);
+  const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const disableMutation = useDisableTenantMutation(tenant.id);
+  const deleteMutation = useDeleteTenantMutation(tenant.id);
 
-  const confirmToggle = async () => {
-    await setActiveMutation.mutateAsync(!tenant.isActive);
-    setConfirmOpen(false);
+  const confirmDisable = async () => {
+    await disableMutation.mutateAsync();
+    setDisableConfirmOpen(false);
+  };
+
+  const confirmDelete = async () => {
+    await deleteMutation.mutateAsync();
+    setDeleteConfirmOpen(false);
   };
 
   return {
-    isConfirmOpen,
-    openConfirm: () => setConfirmOpen(true),
-    setConfirmOpen,
-    confirmToggle,
-    isSubmitting: setActiveMutation.isPending,
+    isDisableConfirmOpen,
+    openDisableConfirm: () => setDisableConfirmOpen(true),
+    setDisableConfirmOpen,
+    confirmDisable,
+    isDisabling: disableMutation.isPending,
+    disableError: disableMutation.error instanceof Error ? disableMutation.error.message : null,
+
+    isDeleteConfirmOpen,
+    openDeleteConfirm: () => setDeleteConfirmOpen(true),
+    setDeleteConfirmOpen,
+    confirmDelete,
+    isDeleting: deleteMutation.isPending,
+    deleteError: deleteMutation.error instanceof Error ? deleteMutation.error.message : null,
   };
 }

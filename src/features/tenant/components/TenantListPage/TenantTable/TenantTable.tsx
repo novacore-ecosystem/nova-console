@@ -1,22 +1,35 @@
 import Link from "next/link";
-import { DataTable, type DataTableColumn, StatusBadge } from "@novacore/frontend-next-shadcn";
+import {
+  DataTable,
+  type DataTableColumn,
+  type DataTablePaginationState,
+  StatusBadge,
+} from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
 import { TenantActions } from "@/features/tenant/components/TenantListPage/TenantActions";
-import type { TenantRecord } from "@/services/tenant";
+import type { TenantSummaryDto } from "@/services/tenant";
 
 export interface TenantTableProps {
-  tenants: TenantRecord[];
+  tenants: TenantSummaryDto[];
   loading: boolean;
   error: boolean;
   onRetry: () => void;
-  onEdit: (tenant: TenantRecord) => void;
+  pagination?: DataTablePaginationState;
+  onPaginationChange?: (pagination: DataTablePaginationState) => void;
 }
 
-export function TenantTable({ tenants, loading, error, onRetry, onEdit }: TenantTableProps) {
+export function TenantTable({
+  tenants,
+  loading,
+  error,
+  onRetry,
+  pagination,
+  onPaginationChange,
+}: TenantTableProps) {
   const { t } = useAppTranslation();
 
-  const columns: DataTableColumn<TenantRecord>[] = [
+  const columns: DataTableColumn<TenantSummaryDto>[] = [
     { id: "code", header: t("tenant.table.code", "Code") },
     {
       id: "name",
@@ -43,7 +56,7 @@ export function TenantTable({ tenants, loading, error, onRetry, onEdit }: Tenant
     {
       id: "actions",
       header: "",
-      cell: (tenant) => <TenantActions tenant={tenant} onEdit={onEdit} />,
+      cell: (tenant) => <TenantActions tenant={tenant} />,
     },
   ];
 
@@ -56,6 +69,8 @@ export function TenantTable({ tenants, loading, error, onRetry, onEdit }: Tenant
       error={error ? t("tenant.list.loadError", "Failed to load tenants.") : undefined}
       onRetry={onRetry}
       emptyMessage={t("tenant.list.empty", "No tenants found.")}
+      pagination={pagination}
+      onPaginationChange={onPaginationChange}
     />
   );
 }
