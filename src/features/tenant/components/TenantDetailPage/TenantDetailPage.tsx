@@ -16,6 +16,9 @@ import { TenantClientListPanel } from "@/features/tenant-client";
 
 import { useAppTranslation } from "@/shared/i18n";
 import { useTenantDetailPage } from "@/features/tenant/components/TenantDetailPage/useTenantDetailPage";
+import { TenantOverviewPanel } from "@/features/tenant/components/TenantDetailPage/TenantOverviewPanel";
+import { TenantConfigurationPanel } from "@/features/tenant/components/TenantDetailPage/TenantConfigurationPanel";
+import { TenantTranslationsPanel } from "@/features/tenant/components/TenantDetailPage/TenantTranslationsPanel";
 
 export interface TenantDetailPageProps {
   tenantId: string;
@@ -42,29 +45,32 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
           )
         }
       />
-      <Tabs defaultValue="scopes">
+      <Tabs defaultValue="overview">
         <TabsList>
-          <TabsTrigger value="details">{t("tenant.detail.tabDetails", "Details")}</TabsTrigger>
+          <TabsTrigger value="overview">{t("tenant.detail.tabOverview", "Overview")}</TabsTrigger>
+          <TabsTrigger value="configuration">
+            {t("tenant.detail.tabConfiguration", "Configuration")}
+          </TabsTrigger>
+          <TabsTrigger value="translations">
+            {t("tenant.detail.tabTranslations", "Translations")}
+          </TabsTrigger>
+          <TabsTrigger value="security">{t("tenant.detail.tabSecurity", "Security")}</TabsTrigger>
           <TabsTrigger value="scopes">{t("tenant.detail.tabScopes", "Scopes")}</TabsTrigger>
-          <TabsTrigger value="keys">{t("tenant.detail.tabKeys", "Keys")}</TabsTrigger>
         </TabsList>
-        <TabsContent value="details">
-          <dl className="grid gap-2 text-sm">
-            <div>
-              <dt className="text-muted-foreground">{t("tenant.form.code", "Code")}</dt>
-              <dd>{tenant.code}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">{t("tenant.form.name", "Name")}</dt>
-              <dd>{tenant.name}</dd>
-            </div>
-          </dl>
+        <TabsContent value="overview">
+          <TenantOverviewPanel tenant={tenant} />
+        </TabsContent>
+        <TabsContent value="configuration">
+          <TenantConfigurationPanel tenant={tenant} />
+        </TabsContent>
+        <TabsContent value="translations">
+          <TenantTranslationsPanel tenant={tenant} />
+        </TabsContent>
+        <TabsContent value="security">
+          <TenantClientListPanel tenantId={tenant.id} clients={tenant.clients} />
         </TabsContent>
         <TabsContent value="scopes">
           <ScopeListPanel tenantId={tenant.id} />
-        </TabsContent>
-        <TabsContent value="keys">
-          <TenantClientListPanel tenantId={tenant.id} />
         </TabsContent>
       </Tabs>
     </PageContainer>
