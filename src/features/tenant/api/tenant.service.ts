@@ -1,38 +1,54 @@
+import type { PaginatedResult } from "@novacore/frontend-foundation";
+
 import {
   createTenant,
-  getTenantById,
-  getTenants,
-  isSeeded,
+  deleteTenant,
+  disableTenant,
+  getTenant,
   listTenants,
-  seedTenants,
-  setTenantActive,
+  rotateTenantClient,
   updateTenant,
+  updateTenantConfig,
+  updateTenantDictionary,
+  upsertTenantTranslation,
   type CreateTenantInput,
-  type TenantRecord,
+  type ListTenantsParams,
+  type TenantClientRotationDto,
+  type TenantDetailDto,
+  type TenantSummaryDto,
   type UpdateTenantInput,
+  type UpsertTenantTranslationInput,
 } from "@/services/tenant";
 
-async function ensureSeeded(): Promise<void> {
-  if (!isSeeded()) seedTenants(await listTenants());
-}
-
 export const tenantService = {
-  /** Seeds the dev adapter from the real endpoint on first call — see docs/decisions/README.md. */
-  async list(): Promise<TenantRecord[]> {
-    await ensureSeeded();
-    return getTenants();
+  async list(params: ListTenantsParams): Promise<PaginatedResult<TenantSummaryDto>> {
+    return listTenants(params);
   },
-  async getById(id: string): Promise<TenantRecord | null> {
-    await ensureSeeded();
-    return getTenantById(id);
+  async getById(id: string): Promise<TenantDetailDto> {
+    return getTenant(id);
   },
-  async create(input: CreateTenantInput): Promise<TenantRecord> {
+  async create(input: CreateTenantInput): Promise<string> {
     return createTenant(input);
   },
-  async update(id: string, input: UpdateTenantInput): Promise<TenantRecord> {
+  async update(id: string, input: UpdateTenantInput): Promise<void> {
     return updateTenant(id, input);
   },
-  async setActive(id: string, isActive: boolean): Promise<TenantRecord> {
-    return setTenantActive(id, isActive);
+  async disable(id: string): Promise<void> {
+    return disableTenant(id);
+  },
+  async delete(id: string): Promise<void> {
+    return deleteTenant(id);
+  },
+  async rotateClient(id: string, name?: string): Promise<TenantClientRotationDto> {
+    return rotateTenantClient(id, name);
+  },
+  async updateConfig(id: string, language: string | null, config: unknown): Promise<void> {
+    return updateTenantConfig(id, language, config);
+  },
+  async updateDictionary(id: string, language: string, dictionary: unknown): Promise<void> {
+    return updateTenantDictionary(id, language, dictionary);
+  },
+  async upsertTranslation(id: string, input: UpsertTenantTranslationInput): Promise<void> {
+    return upsertTenantTranslation(id, input);
   },
 };
