@@ -4,7 +4,7 @@ import { TenantListPage } from "@/features/tenant";
 
 export default function Page() {
   return (
-    <RequirePermission permission={Permissions.Root}>
+    <RequirePermission permission={Permissions.Tenant.View}>
       <TenantListPage />
     </RequirePermission>
   );
