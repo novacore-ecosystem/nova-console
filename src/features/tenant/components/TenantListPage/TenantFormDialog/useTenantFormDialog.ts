@@ -6,7 +6,7 @@ import { createTenantSchema, type CreateTenantFormValues } from "@/features/tena
 
 export function useTenantFormDialog(onOpenChange: (open: boolean) => void) {
   const form = useAppForm(createTenantSchema, {
-    defaultValues: { code: "", name: "", logoUrl: "" },
+    defaultValues: { code: "", name: "", logoUrl: "", faviconUrl: "" },
   });
   const createTenantMutation = useCreateTenantMutation();
 
@@ -16,6 +16,7 @@ export function useTenantFormDialog(onOpenChange: (open: boolean) => void) {
         code: values.code,
         name: values.name,
         logoUrl: values.logoUrl || undefined,
+        faviconUrl: values.faviconUrl || undefined,
       });
       form.reset();
       onOpenChange(false);

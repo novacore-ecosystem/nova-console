@@ -39,7 +39,10 @@ export function TenantFormDialog({ open, onOpenChange }: TenantFormDialogProps) 
             label={t("tenant.form.code", "Code")}
             htmlFor="code"
             error={errors.code?.message}
-            description={t("tenant.form.codeHint", "Lowercase letters, numbers, and hyphens only.")}
+            description={t(
+              "tenant.form.codeHint",
+              'Lowercase snake_case, e.g. "acme_corp". Cannot be changed after creation.',
+            )}
           >
             <Input id="code" invalid={!!errors.code} {...register("code")} />
           </FormField>
@@ -56,6 +59,13 @@ export function TenantFormDialog({ open, onOpenChange }: TenantFormDialogProps) 
             error={errors.logoUrl?.message}
           >
             <Input id="logoUrl" invalid={!!errors.logoUrl} {...register("logoUrl")} />
+          </FormField>
+          <FormField
+            label={t("tenant.form.faviconUrl", "Favicon URL")}
+            htmlFor="faviconUrl"
+            error={errors.faviconUrl?.message}
+          >
+            <Input id="faviconUrl" invalid={!!errors.faviconUrl} {...register("faviconUrl")} />
           </FormField>
           {errorMessage ? (
             <p role="alert" className="text-sm text-destructive">
