@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@novacore/frontend-next-shadcn/styles.css";
+import "@/app/globals.css";
 import { Providers } from "@/app/providers";
 
 export const metadata: Metadata = {
