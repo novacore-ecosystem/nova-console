@@ -3,6 +3,7 @@ import {
   DataTable,
   type DataTableColumn,
   type DataTablePaginationState,
+  type DataTableSortState,
   StatusBadge,
 } from "@novacore/frontend-next-shadcn";
 
@@ -17,6 +18,10 @@ export interface TenantTableProps {
   onRetry: () => void;
   pagination?: DataTablePaginationState;
   onPaginationChange?: (pagination: DataTablePaginationState) => void;
+  sorting?: DataTableSortState;
+  onSortingChange?: (sort: DataTableSortState | undefined) => void;
+  /** Column ids to omit from the rendered table — see `tenant-list.config.ts`'s `TENANT_COLUMNS` for the full set. `actions` is never hideable. */
+  hiddenColumns?: string[];
 }
 
 export function TenantTable({
@@ -26,19 +31,20 @@ export function TenantTable({
   onRetry,
   pagination,
   onPaginationChange,
+  sorting,
+  onSortingChange,
+  hiddenColumns = [],
 }: TenantTableProps) {
   const { t } = useAppTranslation();
 
-  const columns: DataTableColumn<TenantSummaryDto>[] = [
-    { id: "code", header: t("tenant.table.code", "Code") },
+  const allColumns: DataTableColumn<TenantSummaryDto>[] = [
+    { id: "code", header: t("tenant.table.code", "Code"), sortable: true },
     {
       id: "name",
       header: t("tenant.table.name", "Name"),
+      sortable: true,
       cell: (tenant) => (
-        <Link
-          href={`/tenants/${tenant.id}`}
-          className="font-medium underline-offset-4 hover:underline"
-        >
+        <Link href={`/tenants/${tenant.id}`} className="font-medium underline-offset-4 hover:underline">
           {tenant.name}
         </Link>
       ),
@@ -60,6 +66,8 @@ export function TenantTable({
     },
   ];
 
+  const columns = allColumns.filter((column) => !hiddenColumns.includes(column.id));
+
   return (
     <DataTable
       data={tenants}
@@ -71,6 +79,8 @@ export function TenantTable({
       emptyMessage={t("tenant.list.empty", "No tenants found.")}
       pagination={pagination}
       onPaginationChange={onPaginationChange}
+      sorting={sorting}
+      onSortingChange={onSortingChange}
     />
   );
 }

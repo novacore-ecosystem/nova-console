@@ -1,7 +1,13 @@
 "use client";
 
 import { formatDateTime } from "@novacore/frontend-foundation";
-import { Button, ConfirmDialog, PageSection, StatusBadge } from "@novacore/frontend-next-shadcn";
+import {
+  Button,
+  ConfirmDialog,
+  ContentPanel,
+  PageSection,
+  StatusBadge,
+} from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
 import { useTenantOverviewPanel } from "@/features/tenant/components/TenantDetailPage/TenantOverviewPanel/useTenantOverviewPanel";
@@ -38,68 +44,77 @@ export function TenantOverviewPanel({ tenant }: TenantOverviewPanelProps) {
               {t("tenant.actions.disable", "Disable")}
             </Button>
           ) : null}
-          <Button variant="outline" size="sm" className="text-destructive" onClick={openDeleteConfirm}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-destructive"
+            onClick={openDeleteConfirm}
+          >
             {t("common.actions.delete", "Delete")}
           </Button>
         </div>
       }
     >
-      <dl className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm md:grid-cols-3">
-        <div>
-          <dt className="text-muted-foreground">{t("tenant.form.code", "Code")}</dt>
-          <dd className="font-mono">{tenant.code}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">{t("tenant.form.name", "Name")}</dt>
-          <dd>{tenant.name}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">{t("tenant.table.status", "Status")}</dt>
-          <dd>
-            {tenant.isActive ? (
-              <StatusBadge label={t("tenant.status.active", "Active")} tone="success" />
-            ) : (
-              <StatusBadge label={t("tenant.status.inactive", "Inactive")} tone="neutral" />
-            )}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">{t("tenant.overview.version", "Bootstrap version")}</dt>
-          <dd>{tenant.version}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">{t("tenant.overview.createdAt", "Created")}</dt>
-          <dd>{formatDateTime(tenant.createdAt)}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">{t("tenant.overview.updatedAt", "Updated")}</dt>
-          <dd>{formatDateTime(tenant.updatedAt)}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">{t("tenant.form.logoUrl", "Logo")}</dt>
-          <dd className="flex items-center gap-2">
-            {tenant.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={tenant.logoUrl} alt="" className="h-6 w-6 rounded object-contain" />
-            ) : null}
-            <span className="truncate text-muted-foreground">
-              {tenant.logoUrl ?? t("tenant.overview.none", "Not set")}
-            </span>
-          </dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">{t("tenant.form.faviconUrl", "Favicon")}</dt>
-          <dd className="flex items-center gap-2">
-            {tenant.faviconUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={tenant.faviconUrl} alt="" className="h-4 w-4 rounded object-contain" />
-            ) : null}
-            <span className="truncate text-muted-foreground">
-              {tenant.faviconUrl ?? t("tenant.overview.none", "Not set")}
-            </span>
-          </dd>
-        </div>
-      </dl>
+      <ContentPanel>
+        <dl className="grid grid-cols-2 gap-x-8 gap-y-5 text-sm md:grid-cols-3">
+          <div>
+            <dt className="text-muted-foreground">{t("tenant.form.code", "Code")}</dt>
+            <dd className="font-mono">{tenant.code}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">{t("tenant.form.name", "Name")}</dt>
+            <dd>{tenant.name}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">{t("tenant.table.status", "Status")}</dt>
+            <dd>
+              {tenant.isActive ? (
+                <StatusBadge label={t("tenant.status.active", "Active")} tone="success" />
+              ) : (
+                <StatusBadge label={t("tenant.status.inactive", "Inactive")} tone="neutral" />
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">
+              {t("tenant.overview.version", "Bootstrap version")}
+            </dt>
+            <dd>{tenant.version}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">{t("tenant.overview.createdAt", "Created")}</dt>
+            <dd>{formatDateTime(tenant.createdAt)}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">{t("tenant.overview.updatedAt", "Updated")}</dt>
+            <dd>{formatDateTime(tenant.updatedAt)}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">{t("tenant.form.logoUrl", "Logo")}</dt>
+            <dd className="flex items-center gap-2">
+              {tenant.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={tenant.logoUrl} alt="" className="h-6 w-6 rounded object-contain" />
+              ) : null}
+              <span className="truncate text-muted-foreground">
+                {tenant.logoUrl ?? t("tenant.overview.none", "Not set")}
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">{t("tenant.form.faviconUrl", "Favicon")}</dt>
+            <dd className="flex items-center gap-2">
+              {tenant.faviconUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={tenant.faviconUrl} alt="" className="h-4 w-4 rounded object-contain" />
+              ) : null}
+              <span className="truncate text-muted-foreground">
+                {tenant.faviconUrl ?? t("tenant.overview.none", "Not set")}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </ContentPanel>
 
       <ConfirmDialog
         open={isDisableConfirmOpen}

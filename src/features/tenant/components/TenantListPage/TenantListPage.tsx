@@ -1,9 +1,9 @@
 "use client";
 
-import { PageContainer } from "@novacore/frontend-next-shadcn";
+import { Building2, CheckCircle2, XCircle } from "lucide-react";
+import { HowTo, PageContainer, StatCard, StatCardRow } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
-import { StatTile, StatTileRow } from "@/shared/entity";
 import { TenantListHeader } from "@/features/tenant/components/TenantListPage/TenantListHeader";
 import { TenantFilters } from "@/features/tenant/components/TenantListPage/TenantFilters";
 import { TenantTable } from "@/features/tenant/components/TenantListPage/TenantTable";
@@ -21,20 +21,58 @@ export function TenantListPage() {
     refetch,
     search,
     setSearch,
+    filters,
+    setFilters,
+    sorts,
+    setSorts,
+    quickSort,
+    onQuickSortChange,
+    hiddenColumns,
+    setHiddenColumns,
+    clearHiddenColumns,
     totalTenants,
     activeTenants,
     inactiveTenants,
+    statsUpdatedAt,
+    statsIsFetching,
   } = useTenantListPage();
+  const freshness = { updatedAt: statsUpdatedAt, isFetching: statsIsFetching };
 
   return (
     <PageContainer>
       <TenantListHeader />
-      <StatTileRow>
-        <StatTile label={t("dashboard.stats.totalTenants", "Total tenants")} value={totalTenants} />
-        <StatTile label={t("dashboard.stats.activeTenants", "Active tenants")} value={activeTenants} />
-        <StatTile label={t("dashboard.stats.inactiveTenants", "Inactive tenants")} value={inactiveTenants} />
-      </StatTileRow>
-      <TenantFilters search={search} onSearchChange={setSearch} isFetching={isFetching} />
+      <StatCardRow freshness={freshness}>
+        <StatCard
+          label={t("dashboard.stats.totalTenants", "Total tenants")}
+          value={totalTenants}
+          icon={<Building2 />}
+          tone="brand"
+        />
+        <StatCard
+          label={t("dashboard.stats.activeTenants", "Active tenants")}
+          value={activeTenants}
+          icon={<CheckCircle2 />}
+          tone="success"
+        />
+        <StatCard
+          label={t("dashboard.stats.inactiveTenants", "Inactive tenants")}
+          value={inactiveTenants}
+          icon={<XCircle />}
+          tone="neutral"
+        />
+      </StatCardRow>
+      <TenantFilters
+        search={search}
+        onSearchChange={setSearch}
+        isFetching={isFetching}
+        filters={filters}
+        onFiltersChange={setFilters}
+        sorts={sorts}
+        onSortsChange={setSorts}
+        hiddenColumns={hiddenColumns}
+        onHiddenColumnsChange={setHiddenColumns}
+        onClearHiddenColumns={clearHiddenColumns}
+      />
       <TenantTable
         tenants={tenants}
         loading={isLoading}
@@ -42,7 +80,16 @@ export function TenantListPage() {
         onRetry={() => refetch()}
         pagination={pagination}
         onPaginationChange={onPaginationChange}
+        sorting={quickSort}
+        onSortingChange={onQuickSortChange}
+        hiddenColumns={hiddenColumns}
       />
+      <HowTo title={t("tenant.list.howToTitle", "Managing tenants")}>
+        {t(
+          "tenant.list.howToBody",
+          "Use search for a quick name/code match, or Filter and Sort for more precise criteria — including fields not shown as table columns. Use Columns to hide fields you don't need; your choice is remembered.",
+        )}
+      </HowTo>
     </PageContainer>
   );
 }
