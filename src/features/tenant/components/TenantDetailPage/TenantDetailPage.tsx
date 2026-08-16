@@ -1,6 +1,9 @@
 "use client";
 
 import {
+  AdminBreadcrumb,
+  Button,
+  ContentPanel,
   ErrorState,
   LoadingState,
   PageContainer,
@@ -19,6 +22,8 @@ import { useTenantDetailPage } from "@/features/tenant/components/TenantDetailPa
 import { TenantOverviewPanel } from "@/features/tenant/components/TenantDetailPage/TenantOverviewPanel";
 import { TenantConfigurationPanel } from "@/features/tenant/components/TenantDetailPage/TenantConfigurationPanel";
 import { TenantTranslationsPanel } from "@/features/tenant/components/TenantDetailPage/TenantTranslationsPanel";
+import { PermissionScopePanel } from "@/features/tenant/components/TenantDetailPage/PermissionScopePanel";
+import { TenantIdentityForm } from "@/features/tenant/components/TenantPage/TenantIdentityForm";
 
 export interface TenantDetailPageProps {
   tenantId: string;
@@ -26,7 +31,7 @@ export interface TenantDetailPageProps {
 
 export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
   const { t } = useAppTranslation();
-  const { tenant, isLoading, isError } = useTenantDetailPage(tenantId);
+  const { tenant, isLoading, isError, action, startEditing, stopEditing } = useTenantDetailPage(tenantId);
 
   if (isLoading) return <LoadingState />;
   if (isError || !tenant)
@@ -37,12 +42,24 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
       <PageHeader
         title={tenant.name}
         description={tenant.code}
+        breadcrumb={
+          <AdminBreadcrumb
+            items={[{ label: t("tenant.list.title", "Tenants"), href: "/tenants" }, { label: tenant.name }]}
+          />
+        }
         actions={
-          tenant.isActive ? (
-            <StatusBadge label={t("tenant.status.active", "Active")} tone="success" />
-          ) : (
-            <StatusBadge label={t("tenant.status.inactive", "Inactive")} tone="neutral" />
-          )
+          <div className="flex items-center gap-2">
+            {tenant.isActive ? (
+              <StatusBadge label={t("tenant.status.active", "Active")} tone="success" />
+            ) : (
+              <StatusBadge label={t("tenant.status.inactive", "Inactive")} tone="neutral" />
+            )}
+            {action === "detail" ? (
+              <Button variant="outline" size="sm" onClick={startEditing}>
+                {t("common.actions.edit", "Edit")}
+              </Button>
+            ) : null}
+          </div>
         }
       />
       <Tabs defaultValue="overview">
@@ -56,9 +73,18 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
           </TabsTrigger>
           <TabsTrigger value="security">{t("tenant.detail.tabSecurity", "Security")}</TabsTrigger>
           <TabsTrigger value="scopes">{t("tenant.detail.tabScopes", "Scopes")}</TabsTrigger>
+          <TabsTrigger value="permissions">
+            {t("tenant.detail.tabPermissions", "Permission scope")}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-          <TenantOverviewPanel tenant={tenant} />
+          {action === "update" ? (
+            <ContentPanel>
+              <TenantIdentityForm mode="update" tenant={tenant} onSuccess={stopEditing} onCancel={stopEditing} />
+            </ContentPanel>
+          ) : (
+            <TenantOverviewPanel tenant={tenant} />
+          )}
         </TabsContent>
         <TabsContent value="configuration">
           <TenantConfigurationPanel tenant={tenant} />
@@ -71,6 +97,9 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
         </TabsContent>
         <TabsContent value="scopes">
           <ScopeListPanel tenantId={tenant.id} />
+        </TabsContent>
+        <TabsContent value="permissions">
+          <PermissionScopePanel tenantId={tenant.id} />
         </TabsContent>
       </Tabs>
     </PageContainer>

@@ -5,7 +5,6 @@ import { Button, ConfirmDialog, PageSection, StatusBadge } from "@novacore/front
 
 import { useAppTranslation } from "@/shared/i18n";
 import { useTenantOverviewPanel } from "@/features/tenant/components/TenantDetailPage/TenantOverviewPanel/useTenantOverviewPanel";
-import { TenantBrandingEditDialog } from "@/features/tenant/components/TenantDetailPage/TenantOverviewPanel/TenantBrandingEditDialog";
 import type { TenantDetailDto } from "@/services/tenant";
 
 export interface TenantOverviewPanelProps {
@@ -15,9 +14,6 @@ export interface TenantOverviewPanelProps {
 export function TenantOverviewPanel({ tenant }: TenantOverviewPanelProps) {
   const { t } = useAppTranslation();
   const {
-    isEditOpen,
-    openEdit,
-    setEditOpen,
     isDisableConfirmOpen,
     openDisableConfirm,
     setDisableConfirmOpen,
@@ -37,9 +33,6 @@ export function TenantOverviewPanel({ tenant }: TenantOverviewPanelProps) {
       title={t("tenant.overview.title", "Identity")}
       actions={
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={openEdit}>
-            {t("tenant.actions.editBranding", "Edit branding")}
-          </Button>
           {tenant.isActive ? (
             <Button variant="outline" size="sm" onClick={openDisableConfirm}>
               {t("tenant.actions.disable", "Disable")}
@@ -107,8 +100,6 @@ export function TenantOverviewPanel({ tenant }: TenantOverviewPanelProps) {
           </dd>
         </div>
       </dl>
-
-      <TenantBrandingEditDialog tenant={tenant} open={isEditOpen} onOpenChange={setEditOpen} />
 
       <ConfirmDialog
         open={isDisableConfirmOpen}

@@ -7,6 +7,14 @@ import { useDebouncedValue } from "@/shared/hooks";
 import { useTenantsQuery } from "@/features/tenant/api/tenant.queries";
 
 const PAGE_SIZE = 20;
+/**
+ * Stats row intentionally reads from a separate, unfiltered query rather than the current
+ * search-scoped page — deriving active/inactive from `tenantsQuery`'s own (searched,
+ * paginated) results would make the summary strip fluctuate with whatever the user typed,
+ * which misrepresents "tenant health at a glance." Same bounded-sample approach as the
+ * Dashboard (see useDashboardPage) — there's no dedicated stats endpoint to call instead.
+ */
+const STATS_SAMPLE_SIZE = 100;
 
 export function useTenantListPage() {
   const [search, setSearch] = useState("");
@@ -18,11 +26,16 @@ export function useTenantListPage() {
   }, [debouncedSearch]);
 
   const tenantsQuery = useTenantsQuery({ search: debouncedSearch, page, pageSize: PAGE_SIZE });
-  const [isCreateDialogOpen, setCreateDialogOpen] = useState(false);
+  const statsQuery = useTenantsQuery({ page: 1, pageSize: STATS_SAMPLE_SIZE });
 
   const { data, pagination } = tenantsQuery.data
     ? fromPaginatedResult(tenantsQuery.data)
     : { data: [], pagination: undefined };
+
+  const statsTenants = statsQuery.data?.items ?? [];
+  const totalTenants = statsQuery.data?.totalCount ?? 0;
+  const activeTenants = statsTenants.filter((tenant) => tenant.isActive).length;
+  const inactiveTenants = statsTenants.filter((tenant) => !tenant.isActive).length;
 
   return {
     tenants: data,
@@ -34,8 +47,8 @@ export function useTenantListPage() {
     refetch: tenantsQuery.refetch,
     search,
     setSearch,
-    isCreateDialogOpen,
-    openCreateDialog: () => setCreateDialogOpen(true),
-    setCreateDialogOpen,
+    totalTenants,
+    activeTenants,
+    inactiveTenants,
   };
 }

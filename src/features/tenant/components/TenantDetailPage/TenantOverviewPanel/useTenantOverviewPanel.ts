@@ -8,7 +8,6 @@ import type { TenantDetailDto } from "@/services/tenant";
 
 export function useTenantOverviewPanel(tenant: TenantDetailDto) {
   const router = useRouter();
-  const [isEditOpen, setEditOpen] = useState(false);
   const [isDisableConfirmOpen, setDisableConfirmOpen] = useState(false);
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
@@ -27,10 +26,6 @@ export function useTenantOverviewPanel(tenant: TenantDetailDto) {
   };
 
   return {
-    isEditOpen,
-    openEdit: () => setEditOpen(true),
-    setEditOpen,
-
     isDisableConfirmOpen,
     openDisableConfirm: () => setDisableConfirmOpen(true),
     setDisableConfirmOpen,
