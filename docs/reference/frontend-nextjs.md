@@ -10,11 +10,13 @@ specific UI wrapper packages plus a demo app (`apps/playground`), both depending
 fully hidden behind it; consumers never configure Tailwind themselves).
 
 Subpath exports: `.` (everything), `./theme` (`AdminProvider`, `useAdminTheme`,
-`ThemeCustomizer`, presets/tokens), `./forms`, `./data` (`DataTable`,
-`fromPaginatedResult`, `EmptyState`/`LoadingState`/`ErrorState`, `StatusBadge`), `./shell`,
+`ThemeCustomizer`, presets/tokens, and `NOVACORE_ADMIN_THEME`/`NOVACORE_CHROME_OVERRIDES`
+— the NovaCore Admin brand theme, see `docs/reference/design-system.md`), `./forms`,
+`./data` (`DataTable`, `fromPaginatedResult`, `EmptyState`/`LoadingState`/`ErrorState`,
+`StatusBadge`, `StatCard`/`StatCardRow`, `DataFreshness`/`useDataFreshness`), `./shell`,
 `./realtime`, `./layout` (`AdminLayout`, `AdminSidebar`, `AdminHeader`, `AdminPage`,
-`PageHeader`, `PermissionGate`), and `./styles.css` (precompiled — import once, don't
-reconfigure Tailwind).
+`PageHeader`, `FilterToolbar`, `PermissionGate`), and `./styles.css` (precompiled — import
+once, don't reconfigure Tailwind).
 
 ```tsx
 // app/providers.tsx

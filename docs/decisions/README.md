@@ -17,6 +17,59 @@ affect the ecosystem's architecture, not routine implementation choices.
 
 ---
 
+### Enterprise list-page infrastructure (filter/sort/columns/pagination) is real `CriteriaRequest`, applied locally
+- **Context:** A follow-up refinement pass asked for column visibility, an advanced filter
+  builder, multi-field sort, and full pagination on admin list pages, plus persisted
+  sidebar/navigation-group state — explicitly requiring the OMS sibling app be inspected
+  first for prior art (it had none worth reusing: no persistence, no multi-sort, no
+  reusable filter-criteria builder — see the plan file for the full audit) and the
+  backend's real search-criteria contract be used, not an invented shape.
+- **Decision:** `AdvancedFilter`/`AdvancedSort` (`frontend-next-shadcn`) produce real
+  `CriteriaFilter[]`/`CriteriaSort[]` from `@novacore/frontend-foundation`'s
+  `src/api/search/` contract. Since no `/tenants/search`-style endpoint exists yet, they're
+  applied **locally** via two new, unit-tested `frontend-foundation` functions
+  (`applyCriteriaFilters`/`applyCriteriaSorts`, `src/api/search/apply.ts`) rather than
+  posted to a fabricated endpoint. `ColumnVisibility` and sidebar collapse/group-open state
+  persist through one new shared primitive, `usePersistentState`
+  (`frontend-next-shadcn`'s `./hooks` export), namespaced
+  `novacore.admin.preferences.*`, keyed by stable ids (group ids, column ids), never
+  translated labels.
+- **Why:** Matches the same "honest about what's real vs. approximated" pattern already
+  established for KPI freshness — the filter/sort *mechanism* is real and reusable (the
+  same `CriteriaFilter`/`CriteriaSort` shapes a real endpoint will eventually accept), only
+  the data source is a local, documented stand-in. Keeping `AdvancedFilter` to a flat
+  filter list (no AND/OR grouping) matches the actual backend contract, which has no
+  grouping concept — building one would imply a capability that doesn't exist server-side.
+- **Divergence:** N/A, new pattern. Applied fully only to Tenant List (the established
+  reference list page); Packages/Groups/Tags don't have these controls yet — a documented
+  follow-up, not silently dropped scope.
+
+---
+
+### NovaCore Admin visual identity lives in `frontend-next-shadcn`, not `nova-console`
+- **Context:** A mockup (`docs/mock-up/nova-core-mockup_template.png`) was supplied as the
+  visual baseline for NovaCore's admin ecosystem, not just this app. The prior state had
+  one raw, unlabeled `overrides` block in `nova-console/src/app/providers.tsx` (commit
+  `eb3ad71`) setting only `primary`/`ring` to a hand-picked indigo — the sidebar stayed
+  stock zinc, and a local `StatTile` existed only because the shared package had no KPI
+  card. Both are the "ShadCN starter" problem the brief warned against.
+- **Decision:** Brand tokens (`NOVACORE_ADMIN_THEME`/`NOVACORE_CHROME_OVERRIDES`) and new
+  reusable primitives (`StatCard`, `DataFreshness`/`useDataFreshness`, `FilterToolbar`)
+  were added to `@novacore/frontend-next-shadcn` (`frontend-nextjs/packages/shadcn`), not
+  `nova-console`. `nova-console`'s `providers.tsx` now consumes `NOVACORE_ADMIN_THEME`
+  directly instead of hand-rolled overrides; its local `StatTile`/`StatTileRow` was
+  deleted in favor of the shared `StatCard`/`StatCardRow`.
+- **Why:** Matches the ecosystem's own layering rule (`docs/rules/architecture.md`) —
+  anything reusable across NovaCore admin products belongs in `frontend-next-shadcn`, not
+  duplicated per app. The chrome-override mechanism itself needed no core engine change:
+  `resolveTheme` already applies `ThemeConfig.overrides` identically to both light and dark
+  resolved token sets (`resolve-theme.ts`), which is exactly why a mode-independent dark
+  sidebar could ship as a named export instead of a new architectural layer. Full rules:
+  `docs/reference/design-system.md`.
+- **Divergence:** Replaces the `eb3ad71` ad-hoc override entirely.
+
+---
+
 ### Hybrid scope architecture (feature-scoped UI, centralized infrastructure)
 - **Context:** Need a structure that scales past a handful of features without either
   scattering infrastructure across every feature folder or collapsing all UI into one
