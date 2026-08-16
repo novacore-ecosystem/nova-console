@@ -1,16 +1,26 @@
 "use client";
 
-import { ContentPanel, PageContainer, PageHeader } from "@novacore/frontend-next-shadcn";
+import { Building2, CheckCircle2, XCircle } from "lucide-react";
+import { ContentPanel, PageContainer, PageHeader, StatCard, StatCardRow } from "@novacore/frontend-next-shadcn";
 
 import { useAppTranslation } from "@/shared/i18n";
-import { StatTile, StatTileRow } from "@/shared/entity";
 import { useDashboardPage } from "@/features/dashboard/components/DashboardPage/useDashboardPage";
 import { RecentTenantsPanel } from "@/features/dashboard/components/DashboardPage/RecentTenantsPanel";
 
 export function DashboardPage() {
   const { t } = useAppTranslation();
-  const { totalTenants, activeTenants, inactiveTenants, recentTenants, isLoading, isError, refetch } =
-    useDashboardPage();
+  const {
+    totalTenants,
+    activeTenants,
+    inactiveTenants,
+    recentTenants,
+    isLoading,
+    isError,
+    refetch,
+    statsUpdatedAt,
+    statsIsFetching,
+  } = useDashboardPage();
+  const freshness = { updatedAt: statsUpdatedAt, isFetching: statsIsFetching };
 
   return (
     <PageContainer>
@@ -18,11 +28,26 @@ export function DashboardPage() {
         title={t("app.name", "Nova Console")}
         description={t("app.description", "NovaCore's central administration console")}
       />
-      <StatTileRow>
-        <StatTile label={t("dashboard.stats.totalTenants", "Total tenants")} value={totalTenants} />
-        <StatTile label={t("dashboard.stats.activeTenants", "Active tenants")} value={activeTenants} />
-        <StatTile label={t("dashboard.stats.inactiveTenants", "Inactive tenants")} value={inactiveTenants} />
-      </StatTileRow>
+      <StatCardRow freshness={freshness}>
+        <StatCard
+          label={t("dashboard.stats.totalTenants", "Total tenants")}
+          value={totalTenants}
+          icon={<Building2 />}
+          tone="brand"
+        />
+        <StatCard
+          label={t("dashboard.stats.activeTenants", "Active tenants")}
+          value={activeTenants}
+          icon={<CheckCircle2 />}
+          tone="success"
+        />
+        <StatCard
+          label={t("dashboard.stats.inactiveTenants", "Inactive tenants")}
+          value={inactiveTenants}
+          icon={<XCircle />}
+          tone="neutral"
+        />
+      </StatCardRow>
       <ContentPanel>
         <p className="text-sm text-muted-foreground">
           {t(

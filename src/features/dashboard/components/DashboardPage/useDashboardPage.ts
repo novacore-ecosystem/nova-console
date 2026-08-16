@@ -24,5 +24,7 @@ export function useDashboardPage() {
     isLoading: tenantsQuery.isLoading,
     isError: tenantsQuery.isError,
     refetch: tenantsQuery.refetch,
+    statsUpdatedAt: tenantsQuery.dataUpdatedAt,
+    statsIsFetching: tenantsQuery.isFetching,
   };
 }

@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fromPaginatedResult, type DataTablePaginationState } from "@novacore/frontend-next-shadcn";
+import { fromPaginatedResult, useDebouncedValue, type DataTablePaginationState } from "@novacore/frontend-next-shadcn";
 
-import { useDebouncedValue } from "@/shared/hooks";
 import { useGroupsQuery, usePackagesQuery, useTagsQuery } from "@/features/subscription/api/subscription.queries";
 
 const PAGE_SIZE = 20;
@@ -45,5 +44,7 @@ export function usePackageListPage() {
     totalPackages: statsQuery.data?.totalCount ?? 0,
     activePackages: statsPackages.filter((pkg) => pkg.status === "active").length,
     archivedPackages: statsPackages.filter((pkg) => pkg.status === "archived").length,
+    statsUpdatedAt: statsQuery.dataUpdatedAt,
+    statsIsFetching: statsQuery.isFetching,
   };
 }
