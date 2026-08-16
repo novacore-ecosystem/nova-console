@@ -1,15 +1,15 @@
 "use client";
 
-import { formatDateTime } from "@novacore/frontend-foundation";
 import {
   Button,
   ConfirmDialog,
   ContentPanel,
   PageSection,
+  RelativeTime,
   StatusBadge,
 } from "@novacore/frontend-next-shadcn";
 
-import { useAppTranslation } from "@/shared/i18n";
+import { useAppTranslation, useLocale } from "@/shared/i18n";
 import { useTenantOverviewPanel } from "@/features/tenant/components/TenantDetailPage/TenantOverviewPanel/useTenantOverviewPanel";
 import type { TenantDetailDto } from "@/services/tenant";
 
@@ -19,6 +19,7 @@ export interface TenantOverviewPanelProps {
 
 export function TenantOverviewPanel({ tenant }: TenantOverviewPanelProps) {
   const { t } = useAppTranslation();
+  const { locale } = useLocale();
   const {
     isDisableConfirmOpen,
     openDisableConfirm,
@@ -83,11 +84,15 @@ export function TenantOverviewPanel({ tenant }: TenantOverviewPanelProps) {
           </div>
           <div>
             <dt className="text-muted-foreground">{t("tenant.overview.createdAt", "Created")}</dt>
-            <dd>{formatDateTime(tenant.createdAt)}</dd>
+            <dd>
+              <RelativeTime date={tenant.createdAt} mode="absolute" locale={locale} />
+            </dd>
           </div>
           <div>
             <dt className="text-muted-foreground">{t("tenant.overview.updatedAt", "Updated")}</dt>
-            <dd>{formatDateTime(tenant.updatedAt)}</dd>
+            <dd>
+              <RelativeTime date={tenant.updatedAt} mode="absolute" locale={locale} />
+            </dd>
           </div>
           <div>
             <dt className="text-muted-foreground">{t("tenant.form.logoUrl", "Logo")}</dt>

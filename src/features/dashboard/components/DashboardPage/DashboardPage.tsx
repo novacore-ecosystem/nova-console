@@ -3,12 +3,13 @@
 import { Building2, CheckCircle2, XCircle } from "lucide-react";
 import { ContentPanel, PageContainer, PageHeader, StatCard, StatCardRow } from "@novacore/frontend-next-shadcn";
 
-import { useAppTranslation } from "@/shared/i18n";
+import { useAppTranslation, useLocale } from "@/shared/i18n";
 import { useDashboardPage } from "@/features/dashboard/components/DashboardPage/useDashboardPage";
 import { RecentTenantsPanel } from "@/features/dashboard/components/DashboardPage/RecentTenantsPanel";
 
 export function DashboardPage() {
   const { t } = useAppTranslation();
+  const { locale } = useLocale();
   const {
     totalTenants,
     activeTenants,
@@ -20,7 +21,7 @@ export function DashboardPage() {
     statsUpdatedAt,
     statsIsFetching,
   } = useDashboardPage();
-  const freshness = { updatedAt: statsUpdatedAt, isFetching: statsIsFetching };
+  const freshness = { updatedAt: statsUpdatedAt, isFetching: statsIsFetching, locale };
 
   return (
     <PageContainer>

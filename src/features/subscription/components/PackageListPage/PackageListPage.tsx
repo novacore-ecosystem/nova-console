@@ -3,7 +3,7 @@
 import { Archive, CheckCircle2, Package } from "lucide-react";
 import { PageContainer, StatCard, StatCardRow } from "@novacore/frontend-next-shadcn";
 
-import { useAppTranslation } from "@/shared/i18n";
+import { useAppTranslation, useLocale } from "@/shared/i18n";
 import { PackageListHeader } from "@/features/subscription/components/PackageListPage/PackageListHeader";
 import { PackageFilters } from "@/features/subscription/components/PackageListPage/PackageFilters";
 import { PackageTable } from "@/features/subscription/components/PackageListPage/PackageTable";
@@ -11,6 +11,7 @@ import { usePackageListPage } from "@/features/subscription/components/PackageLi
 
 export function PackageListPage() {
   const { t } = useAppTranslation();
+  const { locale } = useLocale();
   const {
     packages,
     groups,
@@ -29,7 +30,7 @@ export function PackageListPage() {
     statsUpdatedAt,
     statsIsFetching,
   } = usePackageListPage();
-  const freshness = { updatedAt: statsUpdatedAt, isFetching: statsIsFetching };
+  const freshness = { updatedAt: statsUpdatedAt, isFetching: statsIsFetching, locale };
 
   return (
     <PageContainer>

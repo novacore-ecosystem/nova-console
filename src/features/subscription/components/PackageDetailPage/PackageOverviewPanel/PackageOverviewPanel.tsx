@@ -1,7 +1,6 @@
-import { formatDateTime } from "@novacore/frontend-foundation";
-import { Badge, PageSection } from "@novacore/frontend-next-shadcn";
+import { Badge, PageSection, RelativeTime } from "@novacore/frontend-next-shadcn";
 
-import { useAppTranslation } from "@/shared/i18n";
+import { useAppTranslation, useLocale } from "@/shared/i18n";
 import type { PackageDetailDto, PackageGroupDto, PackageTagDto } from "@/services/subscription";
 
 export interface PackageOverviewPanelProps {
@@ -12,6 +11,7 @@ export interface PackageOverviewPanelProps {
 
 export function PackageOverviewPanel({ pkg, groups, tags }: PackageOverviewPanelProps) {
   const { t } = useAppTranslation();
+  const { locale } = useLocale();
   const groupName = groups.find((group) => group.id === pkg.groupId)?.name ?? t("subscription.form.noGroup", "No group");
   const packageTags = tags.filter((tag) => pkg.tagIds.includes(tag.id));
 
@@ -38,11 +38,15 @@ export function PackageOverviewPanel({ pkg, groups, tags }: PackageOverviewPanel
         </div>
         <div>
           <dt className="text-muted-foreground">{t("subscription.overview.createdAt", "Created")}</dt>
-          <dd>{formatDateTime(pkg.createdAt)}</dd>
+          <dd>
+            <RelativeTime date={pkg.createdAt} mode="absolute" locale={locale} />
+          </dd>
         </div>
         <div>
           <dt className="text-muted-foreground">{t("subscription.overview.updatedAt", "Updated")}</dt>
-          <dd>{formatDateTime(pkg.updatedAt)}</dd>
+          <dd>
+            <RelativeTime date={pkg.updatedAt} mode="absolute" locale={locale} />
+          </dd>
         </div>
         <div className="col-span-2 md:col-span-3">
           <dt className="text-muted-foreground">{t("subscription.form.description", "Description")}</dt>
