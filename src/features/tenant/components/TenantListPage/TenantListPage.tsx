@@ -1,13 +1,13 @@
 "use client";
 
-import { Building2, CheckCircle2, XCircle } from "lucide-react";
 import { HowTo, PageContainer, StatCard, StatCardRow } from "@novacore/frontend-next-shadcn";
+import { Building2, CheckCircle2, XCircle } from "lucide-react";
 
-import { useAppTranslation, useLocale } from "@/shared/i18n";
-import { TenantListHeader } from "@/features/tenant/components/TenantListPage/TenantListHeader";
 import { TenantFilters } from "@/features/tenant/components/TenantListPage/TenantFilters";
+import { TenantListHeader } from "@/features/tenant/components/TenantListPage/TenantListHeader";
 import { TenantTable } from "@/features/tenant/components/TenantListPage/TenantTable";
 import { useTenantListPage } from "@/features/tenant/components/TenantListPage/useTenantListPage";
+import { useAppTranslation, useLocale } from "@/shared/i18n";
 
 export function TenantListPage() {
   const { t } = useAppTranslation();
@@ -42,7 +42,7 @@ export function TenantListPage() {
   return (
     <PageContainer>
       <TenantListHeader />
-      <StatCardRow freshness={freshness}>
+      <StatCardRow freshness={freshness} className="mb-4">
         <StatCard
           label={t("dashboard.stats.totalTenants", "Total tenants")}
           value={totalTenants}
@@ -63,6 +63,7 @@ export function TenantListPage() {
         />
       </StatCardRow>
       <TenantFilters
+        className="mb-2"
         search={search}
         onSearchChange={setSearch}
         isFetching={isFetching}

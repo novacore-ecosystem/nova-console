@@ -1,14 +1,15 @@
 import type { CriteriaFilter, CriteriaSort } from "@novacore/frontend-foundation";
 import { AdvancedFilter, AdvancedSort, ColumnVisibility, FilterToolbar, SearchInput } from "@novacore/frontend-next-shadcn";
 
-import { useAppTranslation } from "@/shared/i18n";
 import {
   TENANT_COLUMNS,
   TENANT_FILTER_FIELDS,
   TENANT_SORT_FIELDS,
 } from "@/features/tenant/components/TenantListPage/tenant-list.config";
+import { useAppTranslation } from "@/shared/i18n";
 
 export interface TenantFiltersProps {
+  className: string | undefined;
   search: string;
   onSearchChange: (value: string) => void;
   isFetching: boolean;
@@ -22,6 +23,7 @@ export interface TenantFiltersProps {
 }
 
 export function TenantFilters({
+  className,
   search,
   onSearchChange,
   isFetching,
@@ -37,6 +39,7 @@ export function TenantFilters({
 
   return (
     <FilterToolbar
+      className={className}
       search={
         <SearchInput
           value={search}
